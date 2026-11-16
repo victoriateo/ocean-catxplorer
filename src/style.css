@@ -56,3 +56,12 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
 #sound:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
 /* on narrow screens the cards span the width, so they start below the sound button */
 @media (max-width: 620px) { .card { top: 68px; } }
+
+/* sound board (?soundboard) */
+#soundboard { position: fixed; z-index: 20; right: 14px; top: 72px; width: 250px; padding: 12px; border-radius: 14px; background: rgba(255,250,240,.96); color: #1d3550; font-size: 13px; box-shadow: 0 8px 28px rgba(0,0,0,.25); }
+#soundboard .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 8px 0 10px; }
+#soundboard button { font: inherit; padding: 7px 6px; border: 0; border-radius: 9px; background: #1d3550; color: #fff6ea; cursor: pointer; }
+#soundboard button:active { transform: scale(.96); }
+#soundboard label { display: block; font-weight: 500; }
+#soundboard input { width: 100%; margin-top: 4px; }
+#soundboard small { display: block; margin-top: 4px; color: #6b7f8f; line-height: 1.3; }

@@ -15,7 +15,8 @@ export function initSoundToggle() {
     btn.title = on ? 'Sound on' : 'Sound off';
     btn.classList.toggle('on', on);
   };
-  btn.addEventListener('click', async () => { await setSound(!isSoundOn()); render(); });
+  btn.addEventListener('click', () => { void setSound(!isSoundOn()); });
+  addEventListener('soundchange', render);
   btn.addEventListener('pointerdown', e => e.stopPropagation());   // pressing it shouldn't steer Catto or poke the creatures
   render();
 }

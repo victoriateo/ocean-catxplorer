@@ -32,7 +32,7 @@ export const AUDIO = {
 const SOUNDS: Record<string, { vol: number; gap: number }> = {
   splash: { vol: 1, gap: .4 }, bubble: { vol: .6, gap: .05 }, boop: { vol: .9, gap: .2 }, wheee: { vol: .8, gap: 1 },
   whoosh: { vol: .8, gap: 1 }, snap: { vol: 1, gap: .3 }, ink: { vol: .9, gap: .2 }, shark: { vol: .7, gap: 5 },
-  chest: { vol: .9, gap: .5 }, coins: { vol: .7, gap: .12 }, ascend: { vol: .9, gap: 2 }, meow: { vol: .8, gap: .5 },
+  chest: { vol: .9, gap: .5 }, coins: { vol: 1, gap: .55 }, ascend: { vol: .9, gap: 2 }, meow: { vol: .8, gap: .5 },
   rumble: { vol: .8, gap: 2 },
 };
 const LOOPS = ['ambient-surface', 'ambient-deep'];
@@ -102,6 +102,7 @@ export async function setSound(on: boolean) {
       const c = ctx; setTimeout(() => { if (!enabled) void c.suspend(); }, AUDIO.fade * 1000 + 150);
     }
   } catch { enabled = false; }
+  window.dispatchEvent(new Event('soundchange'));   // lets the toggle button redraw, whoever changed it
   return enabled;
 }
 
@@ -118,9 +119,16 @@ export function sfx(name: string, vol = 1) {
   } catch { /* a sound failing must never break the dive */ }
 }
 
+/** Names of every one-shot sound (for the sound board). */
+export const soundNames = () => Object.keys(SOUNDS);
+
+/** Sound board only: pretend to be at this depth in metres (−1 = above water, null = follow the dive). */
+export const audition = { depth: null as number | null };
+
 /** Called every frame: sets the ambient mix and muffling from where Catto is. */
 export function updateAudio(dt: number, under: boolean, depth: number) {
   if (!enabled || !ctx || ctx.state !== 'running') return;
+  if (audition.depth !== null) { under = audition.depth >= 0; depth = Math.max(0, audition.depth); }
   const now = ctx.currentTime, tc = AUDIO.fade;
   const k = clamp(depth / AUDIO.cutoffDepth);
   surfGain.gain.setTargetAtTime(under ? 0 : AUDIO.surface, now, tc);

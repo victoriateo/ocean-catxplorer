@@ -46,11 +46,17 @@ function hiss(ctx: Ctx, out: AudioNode, t: number, type: BiquadFilterType, f0: n
 }
 
 export const RECIPES: Record<string, Recipe> = {
-  /** Catto hits the water: a wet burst that falls in pitch, with a low thump under it. */
+  /** Catto hits the water: one big "PSSSHT". A hard, full burst of spray that darkens as it falls, with the weight of the water under it. */
   splash(ctx, out, t, v) {
-    hiss(ctx, out, t, 'bandpass', 1800, 320, .7, .7, .55 * v);
-    hiss(ctx, out, t + .03, 'highpass', 3500, 1500, .5, .35, .18 * v);
-    tone(ctx, out, t, 'sine', 120, 45, .3, .5 * v);
+    // the hit: everything at once, then the brightness drops away fast (that fall is what reads as water, not a sizzle)
+    const hit = hiss(ctx, out, t, 'lowpass', 11000, 900, .3, .6, .62 * v, .003);
+    hit.frequency.setValueAtTime(11000, t); hit.frequency.exponentialRampToValueAtTime(3200, t + .12); hit.frequency.exponentialRampToValueAtTime(700, t + .65);
+    hiss(ctx, out, t, 'lowpass', 300, 80, .7, .32, 1.5 * v, .004);                 // the "whump" of water being shoved aside (noise, so no drum note)
+    hiss(ctx, out, t + .05, 'bandpass', 1400, 450, .6, .8, .2 * v, .1);            // water closing back over him
+    for (let i = 0; i < 5; i++) {                                                  // a few bubbles after
+      const tt = t + .3 + Math.random() * .6, f = 300 + Math.random() * 500;
+      tone(ctx, out, tt, 'sine', f, f * 2, .06, .05 * v, .004);
+    }
   },
   /** One small bubble pop: a quick rising blip. */
   bubble(ctx, out, t, v) {
@@ -82,10 +88,23 @@ export const RECIPES: Record<string, Recipe> = {
     tone(ctx, out, t, 'square', 180, 60, .09, .3 * v, .002);
     tone(ctx, out, t + .01, 'sine', 95, 40, .25, .55 * v, .004);
   },
-  /** Squid ink: a short muffled "pfft". */
+  /** Squid ink: a swirling, gurgling flush of water that drains away. */
   ink(ctx, out, t, v) {
-    hiss(ctx, out, t, 'lowpass', 1400, 200, .8, .45, .6 * v, .015);
-    tone(ctx, out, t, 'sine', 210, 70, .2, .25 * v);
+    const dur = 1.5;
+    const src = ctx.createBufferSource(); src.buffer = noise(ctx); src.loop = true;
+    const swirl = ctx.createBiquadFilter(); swirl.type = 'bandpass'; swirl.Q.value = 1.6;
+    swirl.frequency.setValueAtTime(380, t); swirl.frequency.exponentialRampToValueAtTime(1500, t + .28); swirl.frequency.exponentialRampToValueAtTime(700, t + .8); swirl.frequency.exponentialRampToValueAtTime(190, t + dur);
+    const gurgle = ctx.createGain(); gurgle.gain.value = .6;                      // the wobble that makes it sound like draining water
+    const lfo = ctx.createOscillator(), lg = ctx.createGain(); lfo.type = 'sine';
+    lfo.frequency.setValueAtTime(7, t); lfo.frequency.linearRampToValueAtTime(15, t + dur); lg.gain.value = .4; lfo.connect(lg); lg.connect(gurgle.gain);
+    src.connect(swirl); swirl.connect(gurgle); gurgle.connect(env(ctx, out, t, 2.2 * v, .09, dur));
+    src.start(t, Math.random() * 2); src.stop(t + dur + .2); lfo.start(t); lfo.stop(t + dur + .2);
+    hiss(ctx, out, t, 'lowpass', 420, 110, .7, dur * .9, .9 * v, .12);              // the rush underneath
+    hiss(ctx, out, t, 'highpass', 3000, 2200, .4, .3, .2 * v, .01);                 // the first spurt
+    for (let i = 0; i < 10; i++) {                                                 // glugs as it drains
+      const tt = t + .35 + Math.random() * 1.0, f = 150 + Math.random() * 260;
+      tone(ctx, out, tt, 'sine', f, f * 1.9, .07, .16 * v, .006);
+    }
   },
   /** The shark going by: a slow, low swell. */
   shark(ctx, out, t, v) {
@@ -103,12 +122,14 @@ export const RECIPES: Record<string, Recipe> = {
       tone(ctx, out, t + i * .09, 'sine', f * 2.01, f * 2.01, .5, .05 * v, .006);
     });
   },
-  /** A handful of coins: quick, bright metallic pings. */
+  /** A payout of coins, casino-style: lots of bright, ringing clinks tumbling over each other. */
   coins(ctx, out, t, v) {
-    for (let i = 0; i < 9; i++) {
-      const tt = t + i * .055 + Math.random() * .04, f = 2600 + Math.random() * 2600;
-      tone(ctx, out, tt, 'triangle', f, f * .98, .09, .09 * v, .002);
-      tone(ctx, out, tt, 'sine', f * 1.51, f * 1.5, .06, .04 * v, .002);
+    for (let i = 0; i < 16; i++) {
+      const tt = t + i * .05 + Math.random() * .035, f = 3300 + Math.random() * 2400, ring = .16 + Math.random() * .16, a = (.16 + Math.random() * .08) * v;
+      tone(ctx, out, tt, 'sine', f, f * .995, ring, a, .001);                       // the ring of the coin…
+      tone(ctx, out, tt, 'sine', f * 1.47, f * 1.465, ring * .8, a * .55, .001);    // …and its brighter overtones
+      tone(ctx, out, tt, 'sine', f * 2.09, f * 2.08, ring * .5, a * .3, .001);
+      hiss(ctx, out, tt, 'highpass', 6000, 5000, .5, .018, a * .9, .001);           // the click as it lands
     }
   },
   /** The ride back up: a long rising rush. */
