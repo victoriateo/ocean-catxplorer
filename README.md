@@ -3,6 +3,8 @@
 Scroll-driven ocean dive: Catto the scuba kitten goes from the pier to the Challenger Deep.
 See `SPEC.md` for the design, `HIGGSFIELD_PROMPTS.md` for the art list.
 
+Inspired by Ocean Elevator: https://www.whoi.edu/ocean-elevator/index.html, but wanted to do something more interactive!
+
 ```bash
 npm install
 npm run dev        # http://localhost:5173
