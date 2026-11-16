@@ -1,0 +1,91 @@
+<svg viewBox="0 0 200 220" aria-label="Catto the scuba cat">
+  <defs>
+    <radialGradient id="glassFill" cx="40%" cy="35%" r="70%">
+      <stop offset="0" stop-color="#e8fdff" stop-opacity=".12"/>
+      <stop offset=".75" stop-color="#bff1f7" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#8fdcea" stop-opacity=".45"/>
+    </radialGradient>
+  </defs>
+  <!-- air tank -->
+  <rect x="54" y="112" width="26" height="66" rx="12" fill="#a9b3bd"/>
+  <rect x="59" y="116" width="6" height="56" rx="3" fill="#e4e9ee" opacity=".85"/>
+  <rect x="54" y="150" width="26" height="4" fill="#8a949e"/>
+  <rect x="61" y="104" width="12" height="10" rx="3" fill="#6f7983"/>
+  <!-- tail -->
+  <g class="tail">
+    <path d="M84 186 C 44 196, 16 172, 24 140 C 28 124, 46 126, 42 142 C 38 160, 54 172, 86 172 Z" fill="#f2a54a"/>
+    <path d="M36 150 l 9 -3 M33 165 l 9 -6 M48 178 l 6 -8" stroke="#d9822b" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <!-- back arm -->
+  <path d="M84 138 Q 66 152 70 172" stroke="#22324b" stroke-width="13" stroke-linecap="round" fill="none"/>
+  <!-- legs + flippers -->
+  <g class="leg l1">
+    <rect x="84" y="190" width="20" height="18" rx="7" fill="#2c3e5a"/>
+    <ellipse cx="92" cy="210" rx="17" ry="6" fill="#2fa6a0"/>
+  </g>
+  <g class="leg l2">
+    <rect x="116" y="190" width="20" height="18" rx="7" fill="#2c3e5a"/>
+    <ellipse cx="128" cy="210" rx="17" ry="6" fill="#36b8b0"/>
+  </g>
+  <!-- wetsuit body -->
+  <path d="M80 126 C 70 150, 70 184, 82 200 L 140 200 C 152 184, 152 150, 142 126 Z" fill="#2c3e5a"/>
+  <path d="M84 128 Q 111 138 138 128 L 140 134 Q 111 145 82 134 Z" fill="#22324b"/>
+  <path d="M111 138 L 111 196" stroke="#4a6386" stroke-width="2.5" stroke-dasharray="3 4"/>
+  <circle cx="127" cy="152" r="7" fill="#f2a54a"/>
+  <circle cx="127" cy="152" r="3" fill="#fff3df"/>
+  <!-- head -->
+  <g class="head">
+    <path d="M64 66 L 70 18 L 104 44 Z" fill="#f2a54a"/>
+    <path d="M72 58 L 76 30 L 96 46 Z" fill="#f7b9b0"/>
+    <path d="M116 42 L 150 14 L 158 64 Z" fill="#f2a54a"/>
+    <path d="M123 44 L 146 25 L 151 57 Z" fill="#f7b9b0"/>
+    <ellipse cx="110" cy="82" rx="51" ry="45" fill="#f6b45a"/>
+    <g stroke="#d9822b" stroke-width="4" stroke-linecap="round" fill="none">
+      <path d="M104 41 L 104 53"/><path d="M115 40 L 114 52"/><path d="M93 45 L 95 55"/>
+      <path d="M60 88 L 71 86"/><path d="M62 98 L 72 95"/>
+      <path d="M149 86 L 160 88"/><path d="M148 96 L 158 99"/>
+    </g>
+    <ellipse cx="84" cy="101" rx="7" ry="4" fill="#f39a8a" opacity=".55"/>
+    <ellipse cx="144" cy="101" rx="7" ry="4" fill="#f39a8a" opacity=".55"/>
+    <g class="eyes" id="eyesN">
+      <ellipse cx="97" cy="83" rx="11" ry="13.5" fill="#1d3550"/>
+      <ellipse cx="131" cy="83" rx="11" ry="13.5" fill="#1d3550"/>
+      <circle cx="101" cy="77" r="4" fill="#fff"/>
+      <circle cx="135" cy="77" r="4" fill="#fff"/>
+      <circle cx="94" cy="89" r="1.7" fill="#fff"/>
+      <circle cx="128" cy="89" r="1.7" fill="#fff"/>
+    </g>
+    <path d="M114 97 c -3 -4 -8 -1 -5 3 l 5 5 l 5 -5 c 3 -4 -2 -7 -5 -3z" fill="#e8738a"/>
+    <path id="mouthN" d="M107 107 q 3.5 4 7 0 q 3.5 4 7 0" stroke="#7a3b2a" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <g id="joyFace">
+      <path d="M88 86 q 9 -11 18 0" stroke="#1d3550" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M122 86 q 9 -11 18 0" stroke="#1d3550" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M106 104 q 8 12 16 0 z" fill="#7a3b2a"/><path d="M110 108 q 4 4 8 0" fill="#f08a9a"/>
+      <ellipse cx="84" cy="100" rx="8" ry="4.5" fill="#f37f8c" opacity=".7"/><ellipse cx="144" cy="100" rx="8" ry="4.5" fill="#f37f8c" opacity=".7"/>
+    </g>
+    <g id="shockFace">
+      <circle cx="97" cy="83" r="14" fill="#fff"/><circle cx="131" cy="83" r="14" fill="#fff"/>
+      <circle cx="97" cy="83" r="14" fill="none" stroke="#1d3550" stroke-width="2.5"/><circle cx="131" cy="83" r="14" fill="none" stroke="#1d3550" stroke-width="2.5"/>
+      <circle cx="98" cy="84" r="6.5" fill="#1d3550"/><circle cx="130" cy="84" r="6.5" fill="#1d3550"/>
+      <circle cx="100" cy="81" r="2" fill="#fff"/><circle cx="132" cy="81" r="2" fill="#fff"/>
+      <ellipse cx="114" cy="111" rx="4.5" ry="6" fill="#7a3b2a"/><ellipse cx="114" cy="114" rx="3" ry="2.5" fill="#f08a9a"/>
+      <path d="M80 92 l 6 3 M78 98 l 6 1" stroke="#e8738a" stroke-width="2" stroke-linecap="round"/>
+      <path d="M154 46 q 6 9 0 13 q -6 -4 0 -13z" fill="#9fdcff" stroke="#5aa9d6" stroke-width="1.2"/>
+    </g>
+  </g>
+  <!-- front arm -->
+  <path d="M138 136 Q 158 150 154 172" stroke="#2c3e5a" stroke-width="14" stroke-linecap="round" fill="none"/>
+  <circle cx="154" cy="175" r="8" fill="#f6b860"/>
+  <!-- helmet (animated) -->
+  <g id="helmet">
+    <g id="lamp" opacity="0"><rect x="99" y="4" width="22" height="11" rx="4" fill="#6f7983"/><circle cx="110" cy="9" r="4.5" fill="#fff6c8"/></g>
+    <g id="glass">
+      <circle cx="110" cy="80" r="67" fill="url(#glassFill)" stroke="rgba(235,252,255,.85)" stroke-width="3"/>
+      <path d="M60 58 A 54 54 0 0 1 98 25" stroke="#fff" stroke-width="6" stroke-linecap="round" fill="none" opacity=".85"/>
+      <circle cx="58" cy="76" r="3.2" fill="#fff" opacity=".85"/>
+      <path d="M156 104 A 52 52 0 0 1 140 124" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity=".5"/>
+    </g>
+    <path d="M80 136 Q 110 147 140 136" stroke="rgba(235,252,255,.75)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M86 140 Q 110 149 134 140" stroke="rgba(255,255,255,.35)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>

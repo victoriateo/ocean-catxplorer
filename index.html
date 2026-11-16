@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catxplorer</title>
+<meta name="description" content="Catxplorer: dive with Catto the scuba kitten from a sunny pier to the bottom of the Challenger Deep.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<div id="stage">
+  <canvas id="back"></canvas>
+  <div id="cat"></div>
+  <canvas id="front"></canvas>
+</div>
+<div id="grain"></div>
+
+<div class="ui" id="title">
+  <h1>Catxplorer</h1>
+  <p>Catto is going for a dive.</p>
+</div>
+<div class="ui" id="hint">scroll to dive<span class="arrow">↓</span></div>
+
+<div class="ui" id="meter">
+  <div class="read">
+    <div class="label">DEPTH</div>
+    <div class="val" id="depth">0 m</div>
+    <div class="zone" id="zone">Surface</div>
+  </div>
+  <div id="track">
+    <div class="tick" style="top:0%">SUNLIT</div>
+    <div class="tick" style="top:20%">TWILIGHT</div>
+    <div class="tick" style="top:42%">MIDNIGHT</div>
+    <div class="tick" style="top:66%">ABYSS</div>
+    <div class="tick" style="top:88%">TRENCH</div>
+    <svg id="paw" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#fff6ea"/><g fill="#d9822b"><ellipse cx="12" cy="14.5" rx="4.2" ry="3.4"/><circle cx="7.4" cy="10" r="1.7"/><circle cx="10.4" cy="7.6" r="1.7"/><circle cx="13.6" cy="7.6" r="1.7"/><circle cx="16.6" cy="10" r="1.7"/></g></svg>
+  </div>
+</div>
+
+<div class="ui card" id="card1">
+  <div class="eyebrow">☀ SUNLIT ZONE · 0–200 m</div>
+  <h2>Ooh, fishies.</h2>
+  <p>Move your cursor (or tap) and Catto swims after it. Get too close and the fish scatter. Keep scrolling to head down to the reef.</p>
+</div>
+
+<div class="ui card" id="card2">
+  <div class="eyebrow">CHALLENGER DEEP · ~10,935 m</div>
+  <h2>Treasure found! 🐟</h2>
+  <p>At the very bottom of the ocean, Catto found a glowing tin of sardines. Worth every metre.</p>
+  <div class="row"><small>That's the whole dive.</small><button id="replay">Swim back up ↑</button></div>
+</div>
+
+<div class="ui" id="fact">
+  <div class="eyebrow" id="factEyebrow">MEET THE LOCALS</div>
+  <h3 id="factTitle"></h3>
+  <p id="factBody"></p>
+</div>
+
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+import './style.css';
+import './render/grain.css';
+import './actors/catto.css';
+import { world } from './core/state';
+import { clamp } from './core/math';
+import { computeGeometry } from './core/timeline';
+import { setPageHeight } from './core/scroll';
+import { initInput } from './core/input';
+import { startLoop } from './core/loop';
+import { initLayers, resizeLayers } from './render/layers';
+import { resizeNight } from './render/night';
+import { initCatto, sizeCatto } from './actors/catto';
+import { initScene } from './scenes';
+import { initMeter } from './ui/meter';
+import { initCards } from './ui/cards';
+import { initFactCard } from './ui/factCard';
+
+function layout() {
+  resizeLayers();
+  world.mobile = world.W < 700;
+  world.G = computeGeometry(world.W, world.H, world.mobile);
+  sizeCatto();
+  resizeNight();
+  world.sc = clamp(world.G.s / 170, .75, 1.25);
+  initScene();
+}
+
+initLayers();
+initCatto();
+initMeter();
+initCards();
+initFactCard();
+initInput();
+setPageHeight();
+addEventListener('resize', layout);
+layout();
+startLoop();

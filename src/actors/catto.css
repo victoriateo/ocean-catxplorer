@@ -1,0 +1,28 @@
+/* Catto's DOM/SVG rig (sits between the back and front canvases). */
+#cat { position: absolute; left: 0; top: 0; z-index: 2; transform-origin: 50% 50%; will-change: transform; pointer-events: none; }
+#cat svg { width: 100%; height: 100%; overflow: visible; display: block; }
+
+/* Idle motion */
+.tail { transform-box: view-box; transform-origin: 82px 184px; animation: tail 2.6s ease-in-out infinite; }
+.swimming .tail { animation-duration: .9s; }
+@keyframes tail { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(9deg); } }
+.leg { transform-box: fill-box; transform-origin: 50% 0; }
+.swimming .l1 { animation: kick 1.1s ease-in-out infinite; }
+.swimming .l2 { animation: kick 1.1s ease-in-out infinite reverse; }
+@keyframes kick { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+.eyes { transform-box: fill-box; transform-origin: 50% 50%; animation: blink 5s infinite; }
+@keyframes blink { 0%, 93%, 100% { transform: scaleY(1); } 95.5% { transform: scaleY(.1); } }
+
+/* Faces */
+#shockFace { display: none; }
+.shocked #shockFace { display: inline; }
+.shocked #eyesN, .shocked #mouthN { display: none; }
+#joyFace { display: none; }
+.happy:not(.shocked) #joyFace { display: inline; }
+.happy:not(.shocked) #eyesN, .happy:not(.shocked) #mouthN { display: none; }
+.shocked .head { transform-box: view-box; transform-origin: 110px 90px; animation: pop .35s ease-out; }
+@keyframes pop { 0% { transform: scale(.9); } 60% { transform: scale(1.08); } 100% { transform: scale(1); } }
+
+/* Helmet glow underwater */
+#glass { transition: filter .6s; }
+.swimming #glass { filter: drop-shadow(0 0 14px rgba(170,240,255,.85)); }
