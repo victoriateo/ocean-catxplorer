@@ -2,6 +2,7 @@
 // Catto bolts with the shocked face, and she resets after 4 s.
 import { world, cat } from '../core/state';
 import { clamp, lerp } from '../core/math';
+import { sfx } from '../audio/audio';
 import { drawSprite, sprite, spritePoint } from '../assets/sprites';
 
 export const ANGLER = {
@@ -35,7 +36,7 @@ export function updateAngler(dt: number) {
   if (under && ld < AL * ANGLER.leanR) { const k = (1 - ld / (AL * ANGLER.leanR)) * ANGLER.lean; lx += (cat.wx - lx) * k; ly += (cat.wy - ly) * k; }   // lure leans toward Catto
   A.lx = lx; A.ly = ly;
   if (under && A.state === 'idle' && A.cool <= 0 && ld < G.s * ANGLER.snapR) {
-    A.state = 'snap'; A.t = 0; cat.bang = 1.5;
+    A.state = 'snap'; A.t = 0; cat.bang = 1.5; sfx('snap');
     const a = Math.atan2(cat.wy - A.y, cat.wx - (A.x - AL * .4));
     cat.bolt = { vx: Math.cos(a) * ANGLER.boltX, vy: Math.sin(a) * ANGLER.boltY, t: ANGLER.boltTime };
   }

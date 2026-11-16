@@ -3,6 +3,7 @@
 import { world, cat } from '../core/state';
 import { angLerp, mix } from '../core/math';
 import { isLit } from '../render/night';
+import { sfx } from '../audio/audio';
 import { drawSprite } from '../assets/sprites';
 import { mouse, onTap, pointerFresh, setHover } from '../core/input';
 
@@ -34,7 +35,7 @@ function puffInk() {
 /** Ink cloud + jet away from (fromX, fromY), world coords. */
 function squirt(fromX: number, fromY: number) {
   const Q = squid;
-  Q.state = 'jet'; Q.t = 0; Q.flash = 1;
+  Q.state = 'jet'; Q.t = 0; Q.flash = 1; sfx('ink');
   const a = Math.atan2(Q.y - fromY, Q.x - fromX); Q.vx = Math.cos(a) * SQUID.jetSpeed; Q.vy = Math.sin(a) * SQUID.jetSpeed; Q.ang = a;
   puffInk();
 }

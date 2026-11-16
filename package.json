@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "compare": "node scripts/compare.mjs",
-    "art": "node scripts/prep-art.mjs"
+    "art": "node scripts/prep-art.mjs",
+    "audio": "node scripts/prep-audio.mjs"
   },
   "devDependencies": {
     "playwright": "1.65.1",

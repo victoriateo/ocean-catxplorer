@@ -3,6 +3,7 @@
 import { world, cat } from '../core/state';
 import { clamp, lerp } from '../core/math';
 import { depthOf } from '../core/depth';
+import { sfx } from '../audio/audio';
 import { drawSprite } from '../assets/sprites';
 
 export const SARDINES = {
@@ -40,7 +41,7 @@ export function updateSardines(dt: number, step: number) {
   const dc = Math.hypot(cat.wx - S.x, cat.wy - S.y);
   S.cool = Math.max(0, S.cool - dt);
   const catDeep = depthOf(cat.wy) > SARDINES.maxDepth;
-  if (!S.engaged && under && !catDeep && S.cool <= 0 && dc < ballR + G.s * SARDINES.engageR) S.engaged = true;
+  if (!S.engaged && under && !catDeep && S.cool <= 0 && dc < ballR + G.s * SARDINES.engageR) { S.engaged = true; sfx('whoosh'); }
   if (S.engaged) {
     const k = Math.min(1, dt * SARDINES.followSpeed); S.x += (cat.wx - S.x) * k; S.y += (cat.wy - S.y) * k;
     if (dc > G.s * SARDINES.releaseR || !under || catDeep) { S.engaged = false; S.cool = SARDINES.cooldown; }

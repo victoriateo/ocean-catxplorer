@@ -13,6 +13,8 @@ import { layers } from '../render/layers';
 import { updateMeter } from '../ui/meter';
 import { updateCards } from '../ui/cards';
 import { updateFactCard } from '../ui/factCard';
+import { updateAudio } from '../audio/audio';
+import { depthOf } from './depth';
 
 /** Longest step the sim will take (s); protects against tab-switch jumps. */
 export const MAX_DT = .05;
@@ -47,6 +49,7 @@ function frame(now: number) {
   const endCard = updateCards(us);
   updateMeter(seg(us, UI_FADE.meter[0], UI_FADE.meter[1]), cat.under);
   updateFactCard(endCard);
+  updateAudio(dt, cat.under, cat.under ? Math.max(0, depthOf(camY + H * .5)) : 0);
 
   requestAnimationFrame(frame);
 }

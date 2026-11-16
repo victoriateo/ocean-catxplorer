@@ -4,6 +4,7 @@ import { world, cat } from '../core/state';
 import { clamp, eio, mix, seg } from '../core/math';
 import { drawSprite, sprite } from '../assets/sprites';
 import { mouse, onTap, pointerFresh, setHover } from '../core/input';
+import { sfx } from '../audio/audio';
 
 export const CHEST = {
   size: 1.55,        // chest width, × cat size (prototype: .62)
@@ -52,6 +53,7 @@ function overChest(sx: number, sy: number) {
 
 function openUp() {
   const S = size();
+  sfx('chest'); sfx('coins');
   chest.opened = true; cat.happy = CHEST.happyTime; chest.tin = -CHEST.tinDelay / CHEST.tinTime;
   for (let i = 0; i < CHEST.coins; i++) spawnCoin(false, (Math.random() - .5) * S * .5, (Math.random() - .5) * 5, -(3 + Math.random() * 6));
 }
@@ -66,7 +68,7 @@ function hookTap() {
   if (tapHooked) return; tapHooked = true;
   onTap((sx, sy) => {
     if (!cat.under) return;
-    if (overTin(sx, sy)) { cat.say = { text: CHEST.tinSay, t: CHEST.sayTime, total: CHEST.sayTime }; cat.happy = Math.max(cat.happy, CHEST.sayTime); return; }
+    if (overTin(sx, sy)) { cat.say = { text: CHEST.tinSay, t: CHEST.sayTime, total: CHEST.sayTime }; cat.happy = Math.max(cat.happy, CHEST.sayTime); sfx('meow'); return; }
     if (!overChest(sx, sy)) return;
     if (!chest.opened) openUp();
     chest.clicks++; chest.flow = CHEST.flowTime; chest.flowKeep = chest.clicks <= CHEST.pileClicks;
@@ -82,7 +84,7 @@ export function updateChest(dt: number, step: number) {
   if (chest.opened) chest.tin = Math.min(1, chest.tin + dt / CHEST.tinTime);
   // coins pouring out after a click
   if (chest.flow > 0) {
-    chest.flow -= dt; chest.flowAcc += CHEST.flowRate * dt;
+    chest.flow -= dt; chest.flowAcc += CHEST.flowRate * dt; sfx('coins', .8);   // jingles for as long as they pour (the sound limits its own repeat rate)
     while (chest.flowAcc >= 1) { chest.flowAcc--; spawnCoin(chest.flowKeep, (Math.random() - .5) * S * .7, (Math.random() - .5) * 7.5 * sc, -(4 + Math.random() * 5)); }
   }
   for (const c of chest.coins) {

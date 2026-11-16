@@ -3,6 +3,7 @@
 import { world, cat, nearCat } from '../core/state';
 import { clamp } from '../core/math';
 import { isLit } from '../render/night';
+import { sfx } from '../audio/audio';
 import { drawSprite, spritePoint } from '../assets/sprites';
 
 export const SHARK = {
@@ -10,6 +11,7 @@ export const SHARK = {
   turnCool: 3.5,     // seconds between turns
   scareR: .45,       // Catto bolts if within this × shark length of its centre
   scareCool: 1.4,
+  hearR: 1.1,        // its low swell is heard when it passes within this × its length
   boltSpeed: 500,    // px/s scare impulse
   boltTime: .7,
   speed: 1.2,        // px per frame (× W/1200, clamped .7–1.2)
@@ -28,10 +30,11 @@ export function updateShark(dt: number, step: number) {
   const headX = K.x + K.dir * K.L * .4;
   if (K.cool <= 0 && (isLit(headX, K.y) || !!nearCat(headX, K.y, G.s * SHARK.turnR))) { K.dir = -K.dir; K.cool = SHARK.turnCool; K.vy = (K.y < cat.wy ? -1 : 1) * 1.6; }
   if (nearCat(K.x, K.y, K.L * SHARK.scareR) && K.startle <= 0) {
-    K.startle = SHARK.scareCool; cat.bang = 1.4;
+    K.startle = SHARK.scareCool; cat.bang = 1.4; sfx('shark');
     const a = Math.atan2(cat.wy - K.y, cat.wx - K.x);
     cat.bolt = { vx: Math.cos(a) * SHARK.boltSpeed, vy: Math.sin(a) * SHARK.boltSpeed, t: SHARK.boltTime };
   }
+  if (nearCat(K.x, K.y, K.L * SHARK.hearR)) sfx('shark', .7);   // (the sound has its own 5 s gap)
   K.face += (K.dir - K.face) * Math.min(1, dt * 3);
   K.x += K.dir * SHARK.speed * clamp(W / 1200, .7, 1.2) * step;
   K.vy *= Math.pow(.97, step); K.y += K.vy * step + (G.sharkY - K.y) * .004 * step;

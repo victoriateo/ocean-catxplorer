@@ -3,6 +3,7 @@ import { cat } from '../core/state';
 import { clamp, eio, seg } from '../core/math';
 import { UI_FADE, ASCEND_MS } from '../core/timeline';
 import { chest } from '../actors/chest';
+import { sfx } from '../audio/audio';
 
 let el: { title: HTMLElement; hint: HTMLElement; card1: HTMLElement; card2: HTMLElement; credit: HTMLElement };
 
@@ -15,7 +16,7 @@ export function initCards() {
 /** Eases the scroll back to the top; Catto rides up with a stream of bubbles. */
 export function ascend() {
   if (cat.ascending) return;
-  cat.ascending = true; cat.happy = 99;
+  cat.ascending = true; cat.happy = 99; sfx('ascend');
   const from = scrollY, t0 = performance.now();
   const stepUp = (now: number) => {
     const k = clamp((now - t0) / ASCEND_MS);

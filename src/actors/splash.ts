@@ -1,5 +1,6 @@
 // The splash: droplets, surface ripples and screen shake.
 import { world } from '../core/state';
+import { sfx } from '../audio/audio';
 import { layers } from '../render/layers';
 import { addBubble } from './bubbles';
 
@@ -25,6 +26,7 @@ let shake = 0;
 export const addRipple = (r: Ripple) => { ripples.push(r); };
 
 export function doSplash(x: number) {
+  sfx('splash');
   const { H, G } = world;
   const k = H / 800;
   for (let i = 0; i < SPLASH.drops; i++) {

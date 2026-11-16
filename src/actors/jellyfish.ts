@@ -3,6 +3,7 @@
 // (Stays code-drawn — SPEC §7.)
 import { world, cat, nearCat } from '../core/state';
 import { clamp } from '../core/math';
+import { sfx } from '../audio/audio';
 
 export const JELLY = {
   count: 5,
@@ -47,7 +48,7 @@ export function updateJellies(dt: number, step: number) {
       // boing: Catto springs away from the bell (with a little extra lift), the bell squashes
       let bx = -c.dx / c.d, by = -c.dy / c.d - JELLY.bounceLift; const bl = Math.hypot(bx, by) || 1; bx /= bl; by /= bl;
       cat.bolt = { vx: bx * JELLY.bounceSpeed, vy: by * JELLY.bounceSpeed, t: JELLY.bounceTime, keep: JELLY.bounceKeep };
-      j.sq = 1; j.sqT = 0;
+      j.sq = 1; j.sqT = 0; sfx('boop');
     }
     j.sqT += dt; j.sq *= Math.exp(-dt * JELLY.wobbleFade);
     j.cool -= dt; j.glow = Math.max(0, j.glow - dt * JELLY.glowFade);

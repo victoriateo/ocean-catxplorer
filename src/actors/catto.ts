@@ -8,6 +8,7 @@ import { mouse, IDLE_MS } from '../core/input';
 import { doSplash } from './splash';
 import { addBubble } from './bubbles';
 import { turtle, TURTLE } from './turtle';
+import { sfx } from '../audio/audio';
 import { onArtLoaded, sprite, spriteDef } from '../assets/sprites';
 
 export const SWIM = {
@@ -137,7 +138,7 @@ export function updateCatto(dt: number, now: number, us: number) {
     const k = Math.min(1, dt * SWIM.follow); F.x += (tx - F.x) * k; F.y += (ty - F.y) * k;
     // bump into the turtle → hitch a ride
     const ddx = F.x - (turtle.x - camX), ddy = F.y - (turtle.y - camY);
-    if (freeK >= 1 && towCool <= 0 && Math.hypot(ddx, ddy) < turtle.r * TURTLE.bumpR) tow = { t: 0 };
+    if (freeK >= 1 && towCool <= 0 && Math.hypot(ddx, ddy) < turtle.r * TURTLE.bumpR) { tow = { t: 0 }; sfx('wheee'); }
   }
   // Catto can't go through the trench floor; he bumps it and bounces up a little
   floorBounce.cool = Math.max(0, floorBounce.cool - dt);

@@ -8,3 +8,6 @@ assets/*.png
 assets/*.jpg
 assets/*.jpeg
 assets/*.webp
+# recordings: the site uses the copies in public/audio/
+assets/audio/*
+!assets/audio/README.md
