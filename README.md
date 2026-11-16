@@ -12,20 +12,15 @@ npm run art        # turn the paintings in assets/ into web-ready files (dev doe
 npm run audio      # copy the recordings in assets/audio/ into public/audio/ (dev does this too)
 ```
 
-## Swapping in painted art
+## Swapping in desired artwork
 
-1. Save a painting into `assets/` using the filename from `HIGGSFIELD_PROMPTS.md`.
+1. Save desired artwork into `assets/` using the filename from `HIGGSFIELD_PROMPTS.md`. Change the prompt as desired.
 2. With `npm run dev` running, it is picked up within a second or two and the page reloads.
    (Otherwise run `npm run art`.) A web-ready copy is written to `public/art/`: flat background
    cut away if the picture has no transparency, shrunk to 1024 px, saved as WebP. The original is
    never changed.
 3. If it sits in the wrong place or at the wrong size, change its `anchor` / `scale` in
    `assets/manifest.json` and save. The notes at the top of that file explain the numbers.
-
-Anything without a painting keeps its code-drawn version, so pieces can be swapped one at a time.
-Delete a painting from `assets/` and that piece goes back to code-drawn. Add `?art=off` to the URL
-to see everything code-drawn. Commit `public/art/` (the originals in `assets/` are git-ignored
-because of their size).
 
 ## Sound
 
