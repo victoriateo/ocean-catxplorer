@@ -1,5 +1,6 @@
-// Moon jellies: pulse up, sink slowly. A boop pushes the jelly away, flashes its glow
-// and nudges Catto back. (Stays code-drawn — SPEC §7.)
+// Moon jellies: pulse up, sink slowly. Touch one and Catto bounces off it like a trampoline:
+// the bell squashes and springs back, the jelly is pushed away and its glow flashes.
+// (Stays code-drawn — SPEC §7.)
 import { world, cat, nearCat } from '../core/state';
 import { clamp } from '../core/math';
 
@@ -7,20 +8,26 @@ export const JELLY = {
   count: 5,
   boopR: .38,        // touch distance = jelly radius + this × cat size
   boopPush: 3,       // impulse given to the jelly
-  boopNudge: 22,     // px Catto is nudged back
-  boopCool: .6,      // seconds between boops
+  bounceSpeed: 300,  // px/s Catto springs away at
+  bounceKeep: .3,    // share of that speed left after a second (higher = a longer, floatier drift)
+  bounceTime: 1.1,   // seconds he drifts before he steers again
+  bounceLift: .35,   // extra upward share of the bounce, so it reads as a hop
+  squash: .3,        // how far the bell flattens on impact (0–1)
+  wobbleRate: 11,    // speed of the springy wobble afterwards
+  wobbleFade: 1.8,   // how quickly the wobble dies away, per second
+  boopCool: 1.2,      // seconds between boops
   glowFade: .7,      // glow lost per second
   pulseRate: 1.7,
 };
 
 interface Tentacle { u: number; len: number; w: number; col: string; ph: number }
-interface Jelly { x: number; y: number; vx: number; vy: number; ph: number; seed: number; glow: number; cool: number; r: number; tents: Tentacle[] }
+interface Jelly { x: number; y: number; vx: number; vy: number; ph: number; seed: number; glow: number; cool: number; r: number; tents: Tentacle[]; sq: number; sqT: number }
 let jellies: Jelly[] = [];
 
 export function initJellies() {
   const { W, H, G } = world, ox = G.ox;
   jellies = Array.from({ length: JELLY.count }, (_, i) => ({ x: ox + W * (.22 + i * .14), y: G.jellyY + (Math.random() - .5) * H * .6, vx: 0, vy: 0,
-    ph: Math.random() * 6, seed: Math.random() * 6, glow: 0, cool: 0, r: G.s * (.2 + Math.random() * .12), tents: [] as Tentacle[] }));
+    ph: Math.random() * 6, seed: Math.random() * 6, glow: 0, cool: 0, r: G.s * (.2 + Math.random() * .12), tents: [] as Tentacle[], sq: 0, sqT: 0 }));
 }
 
 /** Tentacles are generated last in the prototype's init order. */
@@ -30,13 +37,19 @@ export function initJellyTentacles() {
 }
 
 export function updateJellies(dt: number, step: number) {
-  const { W, H, G, t } = world, F = cat.F;
+  const { W, H, G, t } = world;
   for (const j of jellies) {
     j.ph += dt * JELLY.pulseRate;
     j.vy += (-Math.max(0, Math.cos(j.ph)) * .045 + .012) * step;
     j.vx += Math.sin(t * .3 + j.seed) * .002 * step;
     const c = nearCat(j.x, j.y, j.r + G.s * JELLY.boopR);
-    if (c && j.cool <= 0) { j.vx += c.dx / c.d * JELLY.boopPush; j.vy += c.dy / c.d * JELLY.boopPush; j.glow = 1; j.cool = JELLY.boopCool; F.x -= c.dx / c.d * JELLY.boopNudge; F.y -= c.dy / c.d * JELLY.boopNudge; }
+    if (c && j.cool <= 0) { j.vx += c.dx / c.d * JELLY.boopPush; j.vy += c.dy / c.d * JELLY.boopPush; j.glow = 1; j.cool = JELLY.boopCool;
+      // boing: Catto springs away from the bell (with a little extra lift), the bell squashes
+      let bx = -c.dx / c.d, by = -c.dy / c.d - JELLY.bounceLift; const bl = Math.hypot(bx, by) || 1; bx /= bl; by /= bl;
+      cat.bolt = { vx: bx * JELLY.bounceSpeed, vy: by * JELLY.bounceSpeed, t: JELLY.bounceTime, keep: JELLY.bounceKeep };
+      j.sq = 1; j.sqT = 0;
+    }
+    j.sqT += dt; j.sq *= Math.exp(-dt * JELLY.wobbleFade);
     j.cool -= dt; j.glow = Math.max(0, j.glow - dt * JELLY.glowFade);
     j.vx *= .97; j.vy *= .97; j.x += j.vx * step; j.y += j.vy * step;
     if (j.y < G.jellyY - H * .45) j.vy += .05; if (j.y > G.jellyY + H * .45) j.vy -= .05;
@@ -47,7 +60,8 @@ export function updateJellies(dt: number, step: number) {
 function drawJelly(ctx: CanvasRenderingContext2D, j: Jelly) {
   const { H, t, camX, camY } = world;
   const x = j.x - camX, y = j.y - camY; if (y < -j.r * 6 || y > H + j.r * 2) return;
-  const p = (Math.sin(j.ph) + 1) / 2, rw = j.r * (1 + p * .12), rh = j.r * (.8 - p * .16), g = j.glow;
+  const wob = j.sq * Math.cos(j.sqT * JELLY.wobbleRate) * JELLY.squash;   // + = squashed flat, − = stretched tall
+  const p = (Math.sin(j.ph) + 1) / 2, rw = j.r * (1 + p * .12) * (1 + wob), rh = j.r * (.8 - p * .16) * (1 - wob * 1.2), g = j.glow;
   ctx.lineCap = 'round';
   // soft halo
   const halo = ctx.createRadialGradient(x, y - rh * .3, 2, x, y - rh * .3, rw * 2.2);

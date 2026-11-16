@@ -36,10 +36,10 @@
     "angler-open": { "file": "angler-open", "anchor": [0.45, 0.5], "scale": 1.8, "points": { "stalkTip": [0.12, 0.12] }, "note": "shown when she snaps" },
     "dumbo": { "file": "dumbo", "anchor": [0.5, 0.55], "scale": 1.15, "note": "front view" },
 
-    "chest-closed": { "file": "chest-closed", "anchor": [0.5, 0.95], "scale": 0.75, "note": "anchor = bottom-centre, where it sits on the sand. Needs chest-open too." },
-    "chest-open": { "file": "chest-open", "anchor": [0.5, 0.95], "scale": 0.85, "note": "fades in over the closed one as it opens" },
+    "chest-closed": { "file": "chest-closed", "anchor": [0.5, 0.95], "scale": 1.9, "note": "anchor = bottom-centre, where it sits on the sand. Needs chest-open too." },
+    "chest-open": { "file": "chest-open", "anchor": [0.5, 0.95], "scale": 2.1, "note": "fades in over the closed one as it opens" },
     "pearls-gems": { "file": "pearls-gems", "anchor": [0.5, 0.8], "scale": 0.7, "note": "two piles beside the chest; replaces the loose code-drawn pearls and gems" },
-    "sardine-tin": { "file": "sardine-tin", "anchor": [0.5, 0.5], "scale": 0.62, "note": "the prize that floats up" },
+    "sardine-tin": { "file": "sardine-tin", "anchor": [0.5, 0.5], "scale": 0.8, "note": "the prize that floats up" },
 
     "bg-sky": { "file": "bg-sky", "anchor": [0, 1], "scale": 1.3, "note": "scale is × the screen width, not × Catto. anchor = bottom-left, pinned to the waterline." },
     "pier": { "file": "pier", "anchor": [0.97, 0.3], "scale": 5, "note": "anchor = the top of the deck at the far (right-hand) end of the pier" }

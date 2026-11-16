@@ -13,7 +13,7 @@ const G = () => world.G, H = () => world.H;
 export const facts: Fact[] = [
   { y: () => G().aY, eyebrow: 'MEET THE LOCALS', title: 'Clownfish', body: 'They live among stinging anemone tentacles. A slimy coat keeps them from getting stung. Swim close and watch them hide.' },
   { y: () => G().tangY, eyebrow: 'MEET THE LOCALS', title: 'Sardines', body: 'Sardines swim in schools of thousands to confuse predators. Sometimes it backfires: a tightly packed ball of sardines becomes an all-you-can-eat buffet for big hunters like humpback whales. Swim in and they\'ll circle Catto.' },
-  { y: () => G().turtY, eyebrow: 'MEET THE LOCALS', title: 'Green sea turtle', body: 'Some migrate thousands of kilometres between feeding and nesting grounds. Bump into one to hitch a ride.' },
+  { y: () => G().turtY, eyebrow: 'MEET THE LOCALS', title: 'Green sea turtle', body: 'Unlike most sea turtles, adult green sea turtles are herbivorous and eat mostly seagrass and algae.\n\nSea turtles have existed for over 120 million years – their ancestors swam alongside the dinosaurs.' },
   { y: () => G().jellyY, eyebrow: 'MEET THE LOCALS', title: 'Moon jellyfish', body: 'No brain, no heart, just a pulsing bell. Give one a gentle boop.' },
   { y: () => G().T0 + H() * .35, eyebrow: 'TWILIGHT ZONE · 200–1,000 m', title: 'Lights on', body: 'Sunlight barely reaches this far down, so Catto switches on his helmet light. Many animals here make their own light.' },
   { y: () => G().mantaY, eyebrow: 'MEET THE LOCALS', title: 'Manta ray', body: 'Manta rays have the largest brains of any fish! 🧠 They\'re curious, social animals, and each has a unique pattern of spots on its belly, like a fingerprint. Swim close and it might do a somersault.' },

@@ -25,12 +25,14 @@ export const cat = {
   /** Free-swim target (screen space). Jellies nudge it. */
   F: { x: 0, y: 0 },
   /** Scare impulse ("bolt"). */
-  bolt: { vx: 0, vy: 0, t: 0 },
+  bolt: { vx: 0, vy: 0, t: 0 } as { vx: number; vy: number; t: number; /** share of speed left after 1 s (default .05 = dies off fast) */ keep?: number },
   /** Shocked-face timer, s. */
   bang: 0,
   /** Happy-face timer, s. */
   happy: 0,
   ascending: false,
+  /** Speech bubble: text and seconds left. */
+  say: { text: '', t: 0, total: 1 },
 };
 
 /** Lamp + darkness. */

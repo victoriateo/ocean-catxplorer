@@ -127,7 +127,7 @@ export function updateCatto(dt: number, now: number, us: number) {
     const k = Math.min(1, dt * SWIM.ascendFollow); F.x += (W * .5 - F.x) * k; F.y += (H * .58 - F.y) * k;
   } else if (cat.bolt.t > 0) {   // Catto bolts away after a scare
     const bolt = cat.bolt;
-    bolt.t -= dt; F.x += bolt.vx * dt; F.y += bolt.vy * dt; const d = Math.pow(.05, dt); bolt.vx *= d; bolt.vy *= d;
+    bolt.t -= dt; F.x += bolt.vx * dt; F.y += bolt.vy * dt; const d = Math.pow(bolt.keep ?? .05, dt); bolt.vx *= d; bolt.vy *= d;
     F.x = clamp(F.x, s * .6, W - s * .6); F.y = clamp(F.y, h * .6 + 40, H - h * .55);
   } else {
     let tx: number, ty: number;
@@ -190,8 +190,41 @@ export function drawCattoCallouts(fx: CanvasRenderingContext2D) {
     fx.font = '600 26px Fredoka, ui-rounded, sans-serif'; fx.textAlign = 'center';
     fx.fillStyle = 'rgba(255,246,234,.95)'; fx.fillText('!', cat.x + s * .35, cat.y - h * .6);
   }
+  if (cat.say.t > 0) drawSpeech(fx);
   if (tow) {
     fx.font = '600 18px Fredoka, ui-rounded, sans-serif'; fx.textAlign = 'center';
     fx.fillStyle = 'rgba(255,246,234,.95)'; fx.fillText('wheee!', cat.x, cat.y - h * .62);
   }
+}
+
+/** How long the speech bubble takes to pop in / fade out, s. */
+const SAY_IN = .18, SAY_OUT = .35;
+
+/** Speech bubble above Catto (text and timer live in cat.say). */
+function drawSpeech(fx: CanvasRenderingContext2D) {
+  const { W, G } = world, { text, t, total } = cat.say;
+  fx.save();
+  fx.font = '600 18px Fredoka, ui-rounded, sans-serif'; fx.textAlign = 'center'; fx.textBaseline = 'middle';
+  // wrap to a comfortable width
+  const maxW = Math.min(250, W - 60), words = text.split(' '), lines: string[] = [];
+  let line = '';
+  for (const w of words) { const next = line ? line + ' ' + w : w; if (line && fx.measureText(next).width > maxW) { lines.push(line); line = w; } else line = next; }
+  lines.push(line);
+  const lh = 24, bw = Math.max(...lines.map(l => fx.measureText(l).width)) + 34, bh = lines.length * lh + 22;
+  // sits beside Catto, on whichever side has more room, and stays clear of the end card
+  const side = cat.x < W / 2 ? 1 : -1;
+  const card = document.getElementById('card2')!, cardBottom = +card.style.opacity > .05 ? card.getBoundingClientRect().bottom + 12 : 10;
+  const cx = clamp(cat.x + side * (G.s * .5 + bw / 2 + 8), bw / 2 + 12, W - bw / 2 - 12);
+  const cy = clamp(cat.y - G.h * .22, cardBottom + bh / 2, world.H - bh / 2 - 12);
+  const k = eout(Math.min(1, (total - t) / SAY_IN));
+  fx.globalAlpha = Math.min(1, t / SAY_OUT);
+  fx.translate(cx, cy + (1 - k) * 10); fx.scale(.7 + .3 * k, .7 + .3 * k);
+  fx.shadowColor = 'rgba(0,0,0,.25)'; fx.shadowBlur = 14; fx.shadowOffsetY = 3;
+  fx.fillStyle = '#fffaf0'; fx.beginPath(); fx.roundRect(-bw / 2, -bh / 2, bw, bh, 18); fx.fill();
+  fx.shadowColor = 'transparent';
+  const ty = clamp(cat.y - G.h * .22 - cy, -bh / 2 + 16, bh / 2 - 16);   // tail points sideways at Catto's head
+  fx.beginPath(); fx.moveTo(-side * (bw / 2 - 2), ty - 10); fx.lineTo(-side * (bw / 2 - 2), ty + 10); fx.lineTo(-side * (bw / 2 + 14), ty + 3); fx.closePath(); fx.fill();
+  fx.fillStyle = '#1d3550';
+  lines.forEach((l, i) => fx.fillText(l, 0, (i - (lines.length - 1) / 2) * lh + 1));
+  fx.restore();
 }

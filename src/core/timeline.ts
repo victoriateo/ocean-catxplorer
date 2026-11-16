@@ -88,7 +88,7 @@ export function computeGeometry(W: number, H: number, mob: boolean): Geometry {
   G.anglerY = G.M0 + H * 1.4; G.dumboY = G.M0 + H * 3;
   G.A0 = G.M0 + H * MID_LEN;                     // world y at 4,000 m
   G.floorY = G.A0 + H * ABY_LEN + H * .3;        // trench floor
-  G.chestX = G.ox + W * .62;
+  G.chestX = G.ox + W * .5;                     // chest sits mid-screen (prototype: .62)
   G.aY = G.R0 + H * .45; G.tangY = G.R0 + H * 1.4; G.turtY = G.R0 + H * 2.35; G.jellyY = G.R0 + H * 3.5;
   G.wallMax = W * (mob ? .13 : .17);             // how far reef walls reach in from each side
   G.anX = G.ox + W * (mob ? .3 : .27);           // anemone x

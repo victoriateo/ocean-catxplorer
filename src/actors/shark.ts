@@ -62,13 +62,14 @@ export function drawShark(ctx: CanvasRenderingContext2D, glow: boolean) {
     ctx.closePath();
   };
   ctx.fillStyle = back;
-  path([[-.46, -.03], [-.56, -.08], [-.66, -.17], [-.6, -.04], [-.54, .08], [-.47, .04]]); ctx.fill();          // tail fin
+  // tail fin: its root sits inside the tail stalk, so the two read as one shape (long upper lobe, short lower one)
+  path([[-.4, -.03], [-.5, -.05], [-.6, -.12], [-.69, -.2], [-.655, -.1], [-.6, -.015], [-.61, .05], [-.57, .085], [-.5, .04], [-.4, .03]]); ctx.fill();
   path([[-.17, -.08], [-.24, -.15], [-.28, -.07]]); ctx.fill();                                   // single dorsal fin, far back
   path([[.16, .07], [.04, .2], [.08, .07]]); ctx.fill();                                          // pectoral fin
   path([[-.2, .07], [-.27, .12], [-.27, .06]]); ctx.fill();                                       // pelvic fin
   // body
-  const top = [[.5, 0], [.47, -.06], [.36, -.1], [.15, -.115], [-.1, -.1], [-.3, -.06], [-.46, -.025]];
-  const bot = [[-.46, .02], [-.3, .05], [-.1, .085], [.15, .095], [.36, .08], [.47, .05]];
+  const top = [[.5, 0], [.47, -.06], [.36, -.1], [.15, -.115], [-.1, -.1], [-.3, -.065], [-.44, -.04], [-.56, -.035]];
+  const bot = [[-.56, .03], [-.44, .035], [-.3, .055], [-.1, .085], [.15, .095], [.36, .08], [.47, .05]];
   path(top.concat(bot)); ctx.fillStyle = back; ctx.fill();
   ctx.save(); path(top.concat(bot)); ctx.clip();
   ctx.fillStyle = belly; ctx.beginPath(); ctx.ellipse(L * .02, L * .1, L * .5, L * .055, 0, 0, 7); ctx.fill();

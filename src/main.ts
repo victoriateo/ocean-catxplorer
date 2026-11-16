@@ -15,6 +15,9 @@ import { initMeter } from './ui/meter';
 import { initCards } from './ui/cards';
 import { initFactCard } from './ui/factCard';
 import { loadArt } from './assets/sprites';
+import { cat } from './core/state';
+import { squid } from './actors/squid';
+import { chest } from './actors/chest';
 
 function layout() {
   resizeLayers();
@@ -37,3 +40,6 @@ addEventListener('resize', layout);
 layout();
 startLoop();
 loadArt();
+
+// Dev only: live state for poking at in the console and for test scripts (window.__cx.squid, …).
+if (import.meta.env.DEV) (window as unknown as { __cx: unknown }).__cx = { world, cat, squid, chest };

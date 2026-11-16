@@ -5,6 +5,12 @@ import { drawSprite } from '../assets/sprites';
 
 /** Parallax factors (how much each layer moves with the camera). */
 export const SKY = {
+  // soft pastel sunset: pale lavender high up → peach → orange → a coral band at the horizon
+  top: '#dcc6d6', high: '#f7bfa8', low: '#f9a877', horizon: '#f6906c',
+  sun: '#fdeba6', sunGlow: '255,214,150', sunR: 74, sunHeight: .012,   // half-set: sun centre just above the waterline (× H)
+  cloudTop: 'rgba(253,234,206,.97)', cloudUnder: 'rgba(240,160,132,.5)',
+  hills: false,          // no hills: open sea to the horizon
+  gulls: '#8a5a5a',
   sunX: .25, sunY: .6,
   cloudX: .3, cloudY: .7,
   hillsX: .5,
@@ -14,37 +20,62 @@ export const SKY = {
 const clouds = [
   { x0: .05, y: .52, sc: 1.1, sp: 6 }, { x0: .45, y: .62, sc: .8, sp: 4 },
   { x0: .75, y: .48, sc: 1.3, sp: 7 }, { x0: .25, y: .38, sc: .7, sp: 3 },
+  { x0: .6, y: .33, sc: .6, sp: 5 }, { x0: .92, y: .6, sc: .9, sp: 4.5 },
 ];
 
 function cloud(ctx: CanvasRenderingContext2D, x: number, y: number, s: number) {
   ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
   const blobs = [[0, 0, 34], [36, -14, 40], [76, 0, 32], [40, 10, 34], [-26, 8, 22], [104, 10, 20]];
-  ctx.fillStyle = 'rgba(255,214,190,.7)';
+  ctx.fillStyle = SKY.cloudUnder;
   for (const [a, b, r] of blobs) { ctx.beginPath(); ctx.arc(a, b + 7, r, 0, 7); ctx.fill(); }
-  ctx.fillStyle = 'rgba(255,255,255,.95)';
+  ctx.fillStyle = SKY.cloudTop;
   for (const [a, b, r] of blobs) { ctx.beginPath(); ctx.arc(a, b, r, 0, 7); ctx.fill(); }
   ctx.restore();
+}
+
+/** Screen position of the setting sun. */
+function sunPos(): [number, number] {
+  const { W, H, G, camX, camY } = world;
+  return [W * .72 - camX * SKY.sunX, (G.WL - H * SKY.sunHeight) - camY * SKY.sunY];
+}
+
+/** Sunset on the water: a warm wash along the surface and a shimmering path under the sun. Drawn over the sea. */
+export function drawSunGlint(ctx: CanvasRenderingContext2D, wl: number) {
+  const { W, H, t } = world;
+  if (wl < -H * .3 || wl > H + 20) return;
+  const wash = ctx.createLinearGradient(0, wl, 0, wl + H * .22);
+  wash.addColorStop(0, 'rgba(255,170,130,.5)'); wash.addColorStop(1, 'rgba(255,170,130,0)');
+  ctx.fillStyle = wash; ctx.fillRect(0, wl + 7, W, H * .22);
+  const [sx] = sunPos();
+  ctx.fillStyle = 'rgba(255,236,180,.7)';
+  for (let i = 0; i < 9; i++) {
+    const y = wl + 12 + i * i * 1.9 + i * 5, w = (26 + i * 13) * (.7 + .3 * Math.sin(t * 1.6 + i * 1.3));
+    ctx.globalAlpha = (1 - i / 9) * (.55 + .45 * Math.sin(t * 2.3 + i * 2.1));
+    ctx.beginPath(); ctx.ellipse(sx + Math.sin(t * .9 + i) * 6, y, w, 2.2, 0, 0, 7); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
 }
 
 /** Sky, sun, clouds, hills and gulls (only drawn while the waterline is on screen). */
 export function drawSky(ctx: CanvasRenderingContext2D, wl: number) {
   const { W, H, G, t, camX, camY } = world;
   const g = ctx.createLinearGradient(0, wl - H * .75, 0, wl);
-  g.addColorStop(0, '#7cc6df'); g.addColorStop(.55, '#c4e6e6'); g.addColorStop(1, '#ffe0bf');
+  g.addColorStop(0, SKY.top); g.addColorStop(.42, SKY.high); g.addColorStop(.8, SKY.low); g.addColorStop(1, SKY.horizon);
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, Math.max(0, wl + 30));
   // painted sky replaces the sun, clouds and hills; the gulls stay
   const painted = drawSprite(ctx, 'bg-sky', -camX * SKY.cloudX, wl + 2, { unit: W });
   if (!painted) {
-  const sx = W * .8 - camX * SKY.sunX, sy = (G.WL - H * .46) - camY * SKY.sunY;
-  const sg = ctx.createRadialGradient(sx, sy, 10, sx, sy, 150);
-  sg.addColorStop(0, 'rgba(255,246,214,.95)'); sg.addColorStop(.25, 'rgba(255,236,190,.6)'); sg.addColorStop(1, 'rgba(255,236,190,0)');
-  ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(sx, sy, 150, 0, 7); ctx.fill();
-  ctx.fillStyle = '#fff4d8'; ctx.beginPath(); ctx.arc(sx, sy, 34, 0, 7); ctx.fill();
+  const [sx, sy] = sunPos();
+  const sg = ctx.createRadialGradient(sx, sy, 10, sx, sy, 300);
+  sg.addColorStop(0, `rgba(${SKY.sunGlow},.7)`); sg.addColorStop(.35, `rgba(${SKY.sunGlow},.3)`); sg.addColorStop(1, `rgba(${SKY.sunGlow},0)`);
+  ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(sx, sy, 300, 0, 7); ctx.fill();
+  ctx.fillStyle = SKY.sun; ctx.beginPath(); ctx.arc(sx, sy, SKY.sunR * clamp(W / 1200, .6, 1.1), 0, 7); ctx.fill();
   for (const cl of clouds) {
     const span = W + 320;
     cloud(ctx, mod(cl.x0 * span + t * cl.sp - camX * SKY.cloudX, span) - 160, G.WL - H * cl.y - camY * SKY.cloudY, cl.sc * clamp(W / 1200, .6, 1.2));
   }
   const hx = -camX * SKY.hillsX;
+  if (SKY.hills) {
   ctx.fillStyle = '#9cc8bf';
   ctx.beginPath(); ctx.moveTo(hx + W * .5, wl);
   ctx.quadraticCurveTo(hx + W * .6, wl - H * .07, hx + W * .7, wl - H * .03);
@@ -52,7 +83,8 @@ export function drawSky(ctx: CanvasRenderingContext2D, wl: number) {
   ctx.quadraticCurveTo(hx + W * 1.1, wl - H * .08, hx + W * 1.3, wl - H * .03);
   ctx.lineTo(hx + W * 1.4, wl + 4); ctx.closePath(); ctx.fill();
   }
-  ctx.strokeStyle = '#4b5d6e'; ctx.lineWidth = 2; ctx.lineCap = 'round';
+  }
+  ctx.strokeStyle = SKY.gulls; ctx.lineWidth = 2; ctx.lineCap = 'round';
   for (let i = 0; i < 3; i++) {
     const gx = mod(t * (22 + i * 6) + i * 260 - camX * SKY.gullX, W + 100) - 50;
     const gy = G.WL - H * (.4 + i * .07) - camY * SKY.gullY + Math.sin(t * 1.3 + i) * 8;

@@ -4,6 +4,7 @@ import { world, cat } from '../core/state';
 import { angLerp, mix } from '../core/math';
 import { isLit } from '../render/night';
 import { drawSprite } from '../assets/sprites';
+import { mouse, onTap, pointerFresh, setHover } from '../core/input';
 
 export const SQUID = {
   startleR: 1.3,     // startles if Catto is within this × cat size…
@@ -14,30 +15,61 @@ export const SQUID = {
   boltTime: .6,
   inkPuffs: 28,
   inkFade: .3,       // ink life lost per second
+  clickR: .75,       // click / tap within this × cat size of it → it squirts
+  clickCool: .35,    // seconds between squirts from clicking
 };
 
 interface Ink { x: number; y: number; r: number; vx: number; vy: number; life: number }
 export const squid = { x: 0, y: 0, hx: 0, hy: 0, vx: 0, vy: 0, state: 'idle' as 'idle' | 'jet' | 'return', t: 0, flash: 0, ang: -2.6 };
 let ink: Ink[] = [];
+let clickCool = 0;
+
+const overSquid = (sx: number, sy: number) => Math.hypot(sx + world.camX - squid.x, sy + world.camY - squid.y) < world.G.s * SQUID.clickR;
+
+function puffInk() {
+  const Q = squid;
+  for (let i = 0; i < SQUID.inkPuffs; i++) ink.push({ x: Q.x + (Math.random() - .5) * 20, y: Q.y + (Math.random() - .5) * 20, r: 6 + Math.random() * 10, vx: (Math.random() - .5) * 1.2, vy: (Math.random() - .5) * 1.2, life: 1 });
+}
+
+/** Ink cloud + jet away from (fromX, fromY), world coords. */
+function squirt(fromX: number, fromY: number) {
+  const Q = squid;
+  Q.state = 'jet'; Q.t = 0; Q.flash = 1;
+  const a = Math.atan2(Q.y - fromY, Q.x - fromX); Q.vx = Math.cos(a) * SQUID.jetSpeed; Q.vy = Math.sin(a) * SQUID.jetSpeed; Q.ang = a;
+  puffInk();
+}
+
+let tapHooked = false;
+/** Click or tap the squid and it squirts ink and jets off (Catto isn't startled by this). */
+function hookTap() {
+  if (tapHooked) return; tapHooked = true;
+  onTap((sx, sy) => {
+    if (!cat.under || clickCool > 0 || !overSquid(sx, sy)) return;
+    clickCool = SQUID.clickCool;
+    squirt(cat.wx, cat.wy);   // jets away from Catto, as it does when startled
+  });
+}
 
 export function initSquid() {
   const { W, G } = world, ox = G.ox;
   Object.assign(squid, { x: ox + W * .62, y: G.squidY, hx: ox + W * .62, hy: G.squidY, vx: 0, vy: 0, state: 'idle', t: 0, flash: 0, ang: -2.6 });
   ink = [];
+  hookTap();
 }
 
 export function updateSquid(dt: number, step: number) {
   const { G, t } = world, Q = squid, under = cat.under;
-  Q.flash = Math.max(0, Q.flash - dt);
+  Q.flash = Math.max(0, Q.flash - dt); clickCool = Math.max(0, clickCool - dt);
+  // pointer hint while the cursor is over it
+  setHover('squid', under && pointerFresh() && overSquid(mouse.x, mouse.y));
   const qd = Math.hypot(cat.wx - Q.x, cat.wy - Q.y);
   if (Q.state === 'idle') {
     Q.x += (Q.hx + Math.sin(t * .6) * 30 - Q.x) * dt * 1.2; Q.y += (Q.hy + Math.sin(t * 1.1) * 14 - Q.y) * dt * 1.2;
     Q.ang = angLerp(Q.ang, -2.6 + Math.sin(t * .7) * .15, .05);
     if (under && (qd < G.s * SQUID.startleR || (isLit(Q.x, Q.y) && qd < G.s * SQUID.litR))) {
-      Q.state = 'jet'; Q.t = 0; Q.flash = 1; cat.bang = 1.4;
+      cat.bang = 1.4;
       { const b = Math.atan2(cat.wy - Q.y, cat.wx - Q.x); cat.bolt = { vx: Math.cos(b) * SQUID.boltSpeed, vy: Math.sin(b) * SQUID.boltSpeed, t: SQUID.boltTime }; }
-      const a = Math.atan2(Q.y - cat.wy, Q.x - cat.wx); Q.vx = Math.cos(a) * SQUID.jetSpeed; Q.vy = Math.sin(a) * SQUID.jetSpeed; Q.ang = a;
-      for (let i = 0; i < SQUID.inkPuffs; i++) ink.push({ x: Q.x + (Math.random() - .5) * 20, y: Q.y + (Math.random() - .5) * 20, r: 6 + Math.random() * 10, vx: (Math.random() - .5) * 1.2, vy: (Math.random() - .5) * 1.2, life: 1 });
+      squirt(cat.wx, cat.wy);
     }
   } else if (Q.state === 'jet') {
     Q.t += dt; const d = Math.pow(.95, step); Q.vx *= d; Q.vy *= d; Q.x += Q.vx * step; Q.y += Q.vy * step;

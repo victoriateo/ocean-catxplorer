@@ -43,7 +43,10 @@ export function drawDumbo(outer: CanvasRenderingContext2D, alpha: number) {
   if (drawSprite(outer, 'dumbo', x, y, { rot: Math.sin(t * 1.2) * .08, alpha, sy: 1 + Math.sin(D.ph * .6) * .03 })) return;
   // draw at full opacity off-screen first, so overlapping parts read as one shape when faded
   const S = Math.ceil(R * 3.4);
-  if (dumboC.width !== Math.round(S * DPR)) { dumboC.width = dumboC.height = Math.round(S * DPR); }
+  // (the prototype only checked the width; a new canvas is 300 × 150, so when the size came out at
+  //  exactly 300 px the height stayed 150 and she was drawn stretched with her bottom half missing)
+  const px = Math.round(S * DPR);
+  if (dumboC.width !== px || dumboC.height !== px) { dumboC.width = dumboC.height = px; }
   const ctx = dumboC.getContext('2d')!; ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.clearRect(0, 0, S, S);
   ctx.save(); ctx.translate(S / 2, S * .55); ctx.rotate(Math.sin(t * 1.2) * .08);
   const wob = (i: number) => Math.sin(D.ph * .6 + i * 1.3) * R * .05;

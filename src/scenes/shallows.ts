@@ -8,7 +8,7 @@ import { drawReef } from './reef';
 export const SEA = {
   surface: '#5ec2ca',
   shallow: '#2f93a6',
-  deep0: '#1f8399', deep1: '#0a2f42', deep2: '#04131f',
+  deep0: '#1f8399', deep1: '#0a2f42', deep2: '#071a36',
   motes: 170,
   rays: 7,
 };

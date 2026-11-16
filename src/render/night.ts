@@ -5,6 +5,7 @@ import { angler } from '../actors/angler';
 import { chest } from '../actors/chest';
 
 export const NIGHT = {
+  colour: '9,24,58',                          // r,g,b of the darkness: deep navy (prototype: near-black 2,8,20)
   coneLen: 3.4,                               // lamp cone length, × cat size
   coneTilt: .22,                              // cone points this many rad below horizontal
   haloR: 1.05,                                // soft circle around the helmet, × cat size
@@ -39,7 +40,7 @@ export function drawNight(ctx: CanvasRenderingContext2D) {
   const { W, H, G, DPR, camX, camY } = world, { lampK, night, lamp } = light;
   if (night <= .01) return;
   nx.setTransform(DPR, 0, 0, DPR, 0, 0); nx.globalCompositeOperation = 'source-over'; nx.clearRect(0, 0, W, H);
-  nx.fillStyle = `rgba(2,8,20,${night})`; nx.fillRect(0, 0, W, H);
+  nx.fillStyle = `rgba(${NIGHT.colour},${night})`; nx.fillRect(0, 0, W, H);
   const L = G.s * NIGHT.coneLen, ang = coneAngle();
   if (lampK > 0) {
     nx.globalCompositeOperation = 'destination-out';

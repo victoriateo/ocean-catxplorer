@@ -5,7 +5,7 @@
 import { world } from '../core/state';
 import { layers } from './layers';
 import { drawNight } from './night';
-import { drawSky, drawPier } from '../scenes/pier';
+import { drawSky, drawPier, drawSunGlint } from '../scenes/pier';
 import { deepColour, drawSea, drawWaterTint, drawVignette, seaPath } from '../scenes/shallows';
 import { drawTrench } from '../scenes/trench';
 import { drawSnow } from '../scenes/midnight';
@@ -33,6 +33,7 @@ export function drawBack(dark: number) {
   ctx.fillStyle = deep; ctx.fillRect(0, 0, W, H);
   if (wl > -30) drawSky(ctx, wl);
   drawSea(ctx, wl, deep);
+  drawSunGlint(ctx, wl);
   drawPier(ctx);
   if (dark > 0) { seaPath(ctx, wl); ctx.fillStyle = `rgba(3,18,32,${dark})`; ctx.fill(); }
   drawTurtle(ctx);

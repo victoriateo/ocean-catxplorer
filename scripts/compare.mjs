@@ -52,7 +52,7 @@ async function shoot(browser, url, name) {
     else if (stop === 'ascend-done') await page.evaluate(() => window.__step(240));                                             // back on the pier
     else await page.evaluate(([u, pf, settle]) => { window.__scrollTo(u, pf); window.__step(settle); }, [u, SCROLL_PER_FRAME, SETTLE_FRAMES]);
     if (stop === 'end') {   // swim over to the chest so the treasure opens and the end card shows
-      await page.mouse.move(VIEW.width * .62, VIEW.height * .7);
+      await page.mouse.move(VIEW.width * .5, VIEW.height * .7);
       await page.evaluate(() => window.__step(300));
     }
     const file = path.join(out, `${name}-${stop}.png`);
