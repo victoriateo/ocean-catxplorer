@@ -22,10 +22,10 @@
 ## Catto (side ¾ view, facing right)
 | File | Prompt (+ character line + style line) |
 |---|---|
-| `catto-sitting.png` | sitting upright on his bottom, tail curled around, looking up happily, full body |
-| `catto-swim.png` | swimming pose, body slightly tilted forward, front paws reaching ahead, flippers kicking behind, calm curious expression, full body |
-| `catto-shocked.png` | same swimming pose, startled: huge round wide eyes with tiny pupils, small "o" mouth, little blue sweat drop, ears perked, cute not scary |
-| `catto-happy.png` | same swimming pose, overjoyed: eyes closed in happy ^ ^ curves, big open smile, strong blush |
+| `catto_sitting.png` | sitting upright on his bottom, tail curled around, looking up happily, full body |
+| `catto_swim.png` | swimming pose, body slightly tilted forward, front paws reaching ahead, flippers kicking behind, calm curious expression, full body |
+| `catto_shocked.png` | same swimming pose, startled: huge round wide eyes with tiny pupils, small "o" mouth, little blue sweat drop, ears perked, cute not scary |
+| `catto_happy.png` | same swimming pose, overjoyed: eyes closed in happy ^ ^ curves, big open smile, strong blush |
 
 ## Reef
 | File | Prompt (+ style line) |

@@ -7,7 +7,7 @@ import { drawSprite } from '../assets/sprites';
 export const SKY = {
   // soft pastel sunset: pale lavender high up → peach → orange → a coral band at the horizon
   top: '#dcc6d6', high: '#f7bfa8', low: '#f9a877', horizon: '#f6906c',
-  sun: '#fdeba6', sunGlow: '255,214,150', sunR: 74, sunHeight: .012,   // half-set: sun centre just above the waterline (× H)
+  sun: '#fdeba6', sunGlow: '255,214,150', sunR: 62, sunHeight: .25,   // sun centre above the waterline, × H (a little below the middle of the sky)
   cloudTop: 'rgba(253,234,206,.97)', cloudUnder: 'rgba(240,160,132,.5)',
   hills: false,          // no hills: open sea to the horizon
   gulls: '#8a5a5a',

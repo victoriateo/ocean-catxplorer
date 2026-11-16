@@ -57,16 +57,14 @@ export function drawTrench(ctx: CanvasRenderingContext2D) {
     ctx.lineTo(side < 0 ? W * .2 : W * .8, fy + 10); ctx.lineTo(edge, fy + 10); ctx.closePath(); ctx.fill();
   });
   if (fy > H + 120) return;
-  // pale sandy floor
+  drawWreck(ctx, fy);   // before the sand, so the sand covers whatever is below floor level
+  // pale sandy floor: level, so the chest, wreck and coins all sit on the same line
   const sg = ctx.createLinearGradient(0, fy - 10, 0, fy + H * .3);
   sg.addColorStop(0, TRENCH.floorTop); sg.addColorStop(1, TRENCH.floorBottom);
-  ctx.fillStyle = sg; ctx.beginPath(); ctx.moveTo(-10, fy);
-  for (let x = 0; x <= W + 40; x += 40) ctx.lineTo(x, fy + Math.sin(x * .013) * 8 - Math.sin(x * .004) * 14);
-  ctx.lineTo(W + 10, H + 10); ctx.lineTo(-10, H + 10); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = sg; ctx.fillRect(-10, fy, W + 20, H - fy + 10);
   ctx.fillStyle = 'rgba(225,235,245,.25)';
   for (let i = 0; i < 60; i++) { const x = (i * 97) % W, y = fy + 8 + (i * 37) % 80; ctx.beginPath(); ctx.arc(x, y, 1 + i % 3 * .6, 0, 7); ctx.fill(); }
   const pile = !!sprite('pearls-gems');   // painted piles replace the loose pearls and gems (coins stay)
-  drawWreck(ctx, fy);
   for (const d of deco) { if (pile && (d.type === 'pearl' || d.type === 'gem')) continue; drawDeco(ctx, d, d.x - camX, d.y - camY); }
   if (pile) for (const side of [-1, 1]) drawSprite(ctx, 'pearls-gems', G.chestX - camX + side * G.s * (CHEST.size * .6 + .5), fy + 26, { flipX: side > 0 });
 }
@@ -188,7 +186,4 @@ function drawWreck(ctx: CanvasRenderingContext2D, fy: number) {
   ctx.restore();
   ctx.restore();
 
-  // sand drifted over the bottoms, so both halves look sunk in rather than placed on top
-  ctx.fillStyle = TRENCH.floorTop;
-  for (const side of [-1, 1]) { ctx.beginPath(); ctx.ellipse(cx + side * W * TRENCH.wreckX, fy + 22 + (side > 0 ? 6 : 0), 1.75 * u, .16 * u, 0, 0, 7); ctx.fill(); }
 }

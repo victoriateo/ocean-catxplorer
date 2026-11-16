@@ -10,7 +10,7 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
 .ui { position: fixed; z-index: 5; }
 #title { left: clamp(18px, 4vw, 48px); top: clamp(18px, 4vh, 40px); }
 #title h1 { margin: 0; font-weight: 600; font-size: clamp(34px, 6vw, 64px); letter-spacing: -.5px; color: var(--ink); line-height: 1; }
-#title p { margin: .4em 0 0; font-size: clamp(14px, 1.6vw, 18px); color: #3d5a70; }
+#title p { margin: .6em 0 0; font-size: clamp(14px, 1.6vw, 18px); line-height: 1.4; max-width: min(30em, 84vw); color: #3d5a70; }
 #hint { left: 50%; bottom: 28px; transform: translateX(-50%); text-align: center; color: var(--ink); font-weight: 500; font-size: 15px; }
 #hint .arrow { display: block; margin: 6px auto 0; width: 26px; height: 26px; border-radius: 50%; background: var(--cream); box-shadow: 0 4px 14px rgba(0,0,0,.12); line-height: 26px; animation: bob 1.4s ease-in-out infinite; }
 @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
@@ -41,3 +41,8 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
 
 /* fact text can have paragraph breaks */
 #factBody { white-space: pre-line; }
+
+/* credit at the very end of the dive, bottom centre */
+#credit { left: 50%; bottom: 14px; transform: translateX(-50%); width: max-content; max-width: 92vw; text-align: center; font-size: 13px; color: rgba(255,246,234,.82); opacity: 0; pointer-events: none; text-shadow: 0 1px 6px rgba(0,0,0,.5); }
+#credit a { color: #ffd98a; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; }
+#credit a:hover, #credit a:focus-visible { color: #fff; }

@@ -4,11 +4,11 @@ import { clamp, eio, seg } from '../core/math';
 import { UI_FADE, ASCEND_MS } from '../core/timeline';
 import { chest } from '../actors/chest';
 
-let el: { title: HTMLElement; hint: HTMLElement; card1: HTMLElement; card2: HTMLElement };
+let el: { title: HTMLElement; hint: HTMLElement; card1: HTMLElement; card2: HTMLElement; credit: HTMLElement };
 
 export function initCards() {
   const $ = (id: string) => document.getElementById(id)!;
-  el = { title: $('title'), hint: $('hint'), card1: $('card1'), card2: $('card2') };
+  el = { title: $('title'), hint: $('hint'), card1: $('card1'), card2: $('card2'), credit: $('credit') };
   $('replay').addEventListener('click', ascend);
 }
 
@@ -33,5 +33,6 @@ export function updateCards(us: number) {
   el.card1.style.opacity = String(c1);
   const c2 = cat.ascending ? 0 : seg(chest.open, .6, .95);
   el.card2.style.opacity = String(c2); el.card2.style.pointerEvents = c2 > .5 ? 'auto' : 'none';
+  el.credit.style.opacity = String(c2); el.credit.style.pointerEvents = c2 > .5 ? 'auto' : 'none';   // credit appears with the end card
   return c2;
 }

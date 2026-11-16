@@ -157,7 +157,7 @@ export function drawChest(ctx: CanvasRenderingContext2D, layer: 'halo' | 'box' |
   if (fy < -S * 3 || fy > H + S * 3) return;
   const y = fy - S * .4;
   const painted = !!sprite('chest-closed') && !!sprite('chest-open');   // needs both, or the lid could never open
-  const blue = '#2f4f9a', blueD = '#243d78', gold = '#e3b448', goldD = '#b8862c';
+
   if (layer === 'halo') {   // warm pool of light, drawn behind the chest
     const a = .3 + o * .45 + .08 * Math.sin(t * 2);
     const R = G.s * CHEST.haloR * (1 + o * .9);
@@ -206,28 +206,94 @@ export function drawChest(ctx: CanvasRenderingContext2D, layer: 'halo' | 'box' |
     if (k > 0) drawSprite(ctx, 'chest-open', x, fy, { alpha: k });
     return;
   }
-  // lid: hinged at the back. As it opens it swings up behind the box, so we see its darker inside.
-  ctx.save(); ctx.translate(x, y - S * .3 - o * S * .1); ctx.scale(1, 1 + o * .45);
-  ctx.fillStyle = mix(blue, '#172a55', o); ctx.beginPath(); ctx.moveTo(-S * .56, 0); ctx.lineTo(-S * .56, -S * .12); ctx.quadraticCurveTo(0, -S * .5, S * .56, -S * .12); ctx.lineTo(S * .56, 0); ctx.closePath(); ctx.fill();
-  ctx.strokeStyle = gold; ctx.lineWidth = S * .07; ctx.lineJoin = 'round'; ctx.stroke();
-  ctx.globalAlpha = 1 - o; ctx.fillStyle = gold; ctx.fillRect(-S * .045, -S * .34, S * .09, S * .34);   // clasp strap, on the outside only
+  // ── code-drawn chest: weathered wood, iron bands with rivets, barnacles; gold and pearls inside ──
+  const W_ = { a: '#a9713f', b: '#97612f', seam: '#5e3a1f', inner: '#4b2e19', iron: '#5a636f', ironL: '#8d97a3', ironD: '#3c434c', rivet: '#c7ced6' };
+  const hw = S * .55, top = y - S * .3, bot = y + S * .36, bh = bot - top;
+  const rivets = (pts: number[][]) => { for (const [rx, ry] of pts) { ctx.fillStyle = W_.ironD; ctx.beginPath(); ctx.arc(rx, ry + S * .004, S * .017, 0, 7); ctx.fill(); ctx.fillStyle = W_.rivet; ctx.beginPath(); ctx.arc(rx, ry, S * .014, 0, 7); ctx.fill(); } };
+  const band = (bx: number, by: number, bw: number, bhh: number) => { ctx.fillStyle = W_.iron; ctx.fillRect(bx, by, bw, bhh); ctx.fillStyle = W_.ironL; ctx.fillRect(bx, by, bw, Math.max(1.5, S * .012)); ctx.fillStyle = W_.ironD; ctx.fillRect(bx, by + bhh - Math.max(1.5, S * .012), bw, Math.max(1.5, S * .012)); };
+
+  // lid: hinged at the back. Closed it is a banded wooden dome; open it swings up behind and shows its dark inside.
+  ctx.save(); ctx.translate(x, top - o * S * .1); ctx.scale(1, 1 + o * .45);
+  const lid = () => { ctx.beginPath(); ctx.moveTo(-hw, 0); ctx.lineTo(-hw, -S * .12); ctx.quadraticCurveTo(0, -S * .5, hw, -S * .12); ctx.lineTo(hw, 0); ctx.closePath(); };
+  lid(); ctx.fillStyle = mix(W_.a, W_.inner, o); ctx.fill();
+  ctx.save(); lid(); ctx.clip();
+  ctx.strokeStyle = W_.seam; ctx.lineWidth = Math.max(1.2, S * .012); ctx.globalAlpha = .55;                 // plank seams follow the dome
+  for (const k of [.36, .68]) { ctx.beginPath(); ctx.moveTo(-hw, -S * .12 * k); ctx.quadraticCurveTo(0, -S * .5 * k - S * .02, hw, -S * .12 * k); ctx.stroke(); }
+  ctx.globalAlpha = 1; ctx.fillStyle = mix(W_.iron, W_.ironD, o);
+  for (const sx of [-.62, 0, .62]) ctx.fillRect(sx * hw - S * .045, -S * .5, S * .09, S * .5);               // iron straps
   ctx.restore();
-  // box: navy with gold trim, stars and a keyhole
-  ctx.fillStyle = blue; ctx.beginPath(); ctx.roundRect(x - S * .55, y - S * .3, S * 1.1, S * .66, S * .06); ctx.fill();
-  ctx.fillStyle = blueD; ctx.fillRect(x - S * .55, y + S * .2, S * 1.1, S * .16);
-  ctx.fillStyle = gold;
-  ctx.fillRect(x - S * .58, y - S * .32, S * 1.16, S * .07); ctx.fillRect(x - S * .58, y + S * .3, S * 1.16, S * .07);
-  ctx.fillRect(x - S * .58, y - S * .32, S * .08, S * .69); ctx.fillRect(x + S * .5, y - S * .32, S * .08, S * .69);
-  ctx.beginPath(); ctx.roundRect(x - S * .1, y - S * .2, S * .2, S * .24, S * .04); ctx.fill();
-  ctx.fillStyle = goldD; ctx.beginPath(); ctx.arc(x, y - S * .1, S * .035, 0, 7); ctx.fill(); ctx.fillRect(x - S * .012, y - S * .1, S * .024, S * .08);
-  ctx.fillStyle = gold;
-  for (const sx of [-.33, .33]) { ctx.beginPath(); for (let i = 0; i < 10; i++) { const r = (i % 2 ? .035 : .085) * S, a = i * Math.PI / 5 - Math.PI / 2; ctx.lineTo(x + sx * S + Math.cos(a) * r, y - S * .02 + Math.sin(a) * r); } ctx.closePath(); ctx.fill(); }
-  // treasure inside, revealed as the lid opens
+  lid(); ctx.strokeStyle = mix(W_.iron, W_.ironD, o * .6); ctx.lineWidth = S * .06; ctx.lineJoin = 'round'; ctx.stroke();
+  if (o < .5) { ctx.globalAlpha = 1 - o * 2; rivets([[-.62 * hw, -S * .2], [0, -S * .27], [.62 * hw, -S * .2], [-.62 * hw, -S * .07], [.62 * hw, -S * .07]]); ctx.globalAlpha = 1; }
+  ctx.restore();
+
+  // treasure heaped inside, rising into view as the lid opens
   if (o > .05) {
     ctx.save(); ctx.globalAlpha = clamp(o * 1.5);
-    for (const [px, pr, col] of [[-.32, .1, '#f6efe4'], [-.12, .12, '#3fcf7a'], [.08, .11, '#f6efe4'], [.28, .1, '#5ab8f0'], [-.22, .08, '#e3b448'], [.18, .08, '#e3b448']] as [number, number, string][]) {
-      ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x + px * S, y - S * .32, pr * S, Math.PI, 0); ctx.fill();
+    const heapH = S * .2 * o;
+    const gg = ctx.createLinearGradient(0, top - heapH, 0, top + S * .05); gg.addColorStop(0, '#ffe07a'); gg.addColorStop(1, '#c98f24');
+    ctx.fillStyle = gg; ctx.beginPath(); ctx.ellipse(x, top + S * .02, hw * .9, heapH + S * .03, 0, Math.PI, 0); ctx.fill();
+    for (let i = 0; i < 26; i++) {   // individual coins scattered over the heap (fixed pattern)
+      const u = ((i * .381966) % 1) * 2 - 1, v = (i * .6180339) % 1;
+      const px = x + u * hw * .8, py = top + S * .01 - v * heapH * Math.sqrt(Math.max(0, 1 - u * u)) * .95, cr = S * (.05 + (i % 3) * .008);
+      ctx.fillStyle = '#b8862c'; ctx.beginPath(); ctx.ellipse(px, py + cr * .22, cr, cr * .42, (i % 5 - 2) * .12, 0, 7); ctx.fill();
+      ctx.fillStyle = i % 4 ? '#f6cb52' : '#ffe07a'; ctx.beginPath(); ctx.ellipse(px, py, cr, cr * .42, (i % 5 - 2) * .12, 0, 7); ctx.fill();
+      ctx.strokeStyle = 'rgba(160,110,30,.5)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(px, py, cr * .6, cr * .24, (i % 5 - 2) * .12, 0, 7); ctx.stroke();
+    }
+    ctx.fillStyle = '#fffbe0';       // glints
+    for (const [gx, gy, ph] of [[-.3, .7, 0], [.22, .9, 2.1], [.02, .45, 4.2]]) {
+      const tw = Math.max(0, Math.sin(t * 2.2 + ph)) ** 3, gr = S * .07 * tw; if (gr < 1) continue;
+      const px = x + gx * hw, py = top - gy * heapH;
+      ctx.beginPath(); for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4, rr = i % 2 ? gr * .22 : gr; ctx.lineTo(px + Math.cos(a) * rr, py + Math.sin(a) * rr); } ctx.closePath(); ctx.fill();
     }
     ctx.restore();
+  }
+
+  // box front: four planks
+  const ph_ = bh / 4;
+  for (let i = 0; i < 4; i++) { ctx.fillStyle = i % 2 ? W_.b : W_.a; ctx.fillRect(x - hw, top + i * ph_, hw * 2, ph_ + .5); }
+  ctx.strokeStyle = W_.seam; ctx.lineWidth = Math.max(1.2, S * .012);
+  for (let i = 1; i < 4; i++) { ctx.globalAlpha = .6; ctx.beginPath(); ctx.moveTo(x - hw, top + i * ph_); ctx.lineTo(x + hw, top + i * ph_); ctx.stroke(); }
+  ctx.globalAlpha = .28; ctx.lineWidth = Math.max(1, S * .008);                                                // wood grain
+  for (let i = 0; i < 14; i++) { const gx = x - hw * .85 + ((i * 53) % 100) / 100 * hw * 1.6, gy = top + (((i * 37) % 100) / 100) * bh, gl = S * (.06 + (i % 4) * .03); ctx.beginPath(); ctx.moveTo(gx, gy); ctx.quadraticCurveTo(gx + gl / 2, gy + (i % 2 ? 2 : -2), gx + gl, gy); ctx.stroke(); }
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = 'rgba(40,20,10,.18)'; ctx.fillRect(x - hw, bot - bh * .22, hw * 2, bh * .22);              // shade toward the sand
+  // iron: top and bottom bands, corner straps, rivets
+  const t_ = S * .075;
+  band(x - hw - S * .02, top - S * .015, hw * 2 + S * .04, t_); band(x - hw - S * .02, bot - t_, hw * 2 + S * .04, t_);
+  ctx.fillStyle = W_.iron; ctx.fillRect(x - hw - S * .02, top, S * .085, bh); ctx.fillRect(x + hw - S * .065, top, S * .085, bh);
+  ctx.fillStyle = W_.ironL; ctx.fillRect(x - hw - S * .02, top, Math.max(1.5, S * .012), bh); ctx.fillRect(x + hw - S * .065, top, Math.max(1.5, S * .012), bh);
+  const rv: number[][] = [];
+  for (let i = 0; i <= 8; i++) { const rx = x - hw + S * .02 + i * (hw * 2 - S * .04) / 8; rv.push([rx, top + t_ * .45], [rx, bot - t_ * .5]); }
+  for (const k of [.3, .5, .7]) rv.push([x - hw + S * .022, top + bh * k], [x + hw - S * .022, top + bh * k]);
+  rivets(rv);
+  // lock plate with a keyhole
+  ctx.fillStyle = W_.ironL; ctx.beginPath(); ctx.moveTo(x - S * .085, top + S * .02); ctx.lineTo(x + S * .085, top + S * .02); ctx.lineTo(x + S * .085, top + S * .17); ctx.quadraticCurveTo(x, top + S * .27, x - S * .085, top + S * .17); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = W_.ironD; ctx.lineWidth = Math.max(1.2, S * .012); ctx.stroke();
+  ctx.fillStyle = W_.ironD; ctx.beginPath(); ctx.arc(x, top + S * .1, S * .026, 0, 7); ctx.fill(); ctx.fillRect(x - S * .011, top + S * .1, S * .022, S * .07);
+  // barnacles
+  for (const [bx, by, br] of [[-.36, .42, .034], [.3, .2, .03], [.38, .5, .026], [-.2, .13, .024]]) {
+    const px = x + bx * S, py = top + by * S, rr = br * S;
+    ctx.fillStyle = '#c4b3a7'; ctx.beginPath(); ctx.moveTo(px - rr, py + rr * .7); ctx.lineTo(px - rr * .5, py - rr * .7); ctx.lineTo(px + rr * .5, py - rr * .7); ctx.lineTo(px + rr, py + rr * .7); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#6f5f58'; ctx.beginPath(); ctx.ellipse(px, py - rr * .55, rr * .42, rr * .2, 0, 0, 7); ctx.fill();
+  }
+  // pearl strands spilling over the front once it is open
+  if (o > .3) {
+    ctx.save(); ctx.globalAlpha = clamp((o - .3) * 3);
+    for (const [xa, xb, depth] of [[-.4, -.14, .34], [.08, .34, .22], [-.02, .12, .44]]) {
+      const n = Math.round(10 + depth * 22);
+      for (let i = 0; i <= n; i++) {
+        const u = i / n, px = x + (xa + (xb - xa) * u) * S, py = top - S * .01 + Math.sin(u * Math.PI) * depth * S, pr = S * .021;
+        ctx.fillStyle = '#d9d2c6'; ctx.beginPath(); ctx.arc(px, py + pr * .25, pr, 0, 7); ctx.fill();
+        ctx.fillStyle = '#fbf8f1'; ctx.beginPath(); ctx.arc(px, py, pr, 0, 7); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(px - pr * .3, py - pr * .3, pr * .3, 0, 7); ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+  // a couple of coin stacks on the sand beside it
+  for (const [sx, n] of [[-.72, 5], [-.86, 3], [.74, 4]]) for (let i = 0; i < n; i++) {
+    const px = x + sx * S, py = bot - S * .02 - i * S * .028, cr = S * .062;
+    ctx.fillStyle = '#b8862c'; ctx.beginPath(); ctx.ellipse(px, py + cr * .22, cr, cr * .4, 0, 0, 7); ctx.fill();
+    ctx.fillStyle = '#f6cb52'; ctx.beginPath(); ctx.ellipse(px, py, cr, cr * .4, 0, 0, 7); ctx.fill();
   }
 }

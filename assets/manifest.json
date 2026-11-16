@@ -9,10 +9,10 @@
     "Save this file while `npm run dev` is running and the page reloads with the new numbers."
   ],
   "sprites": {
-    "catto-sit": { "file": "catto-sitting", "anchor": [0.517, 0.345], "scale": 1.18, "note": "anchor = middle of his head; it is pinned to the centre of the helmet. Used on the pier." },
-    "catto-swim": { "file": "catto-swim", "anchor": [0.681, 0.375], "scale": 1.15, "note": "anchor = middle of his head. Used from the jump onwards." },
-    "catto-swim-shocked": { "file": "catto-shocked", "anchor": [0.681, 0.375], "scale": 1.15, "note": "anchor = middle of his head. Shown after a scare." },
-    "catto-swim-happy": { "file": "catto-happy", "anchor": [0.665, 0.375], "scale": 1.15, "note": "anchor = middle of his head. Shown at the treasure and on the ride up." },
+    "catto-sit": { "file": "catto_sitting", "anchor": [0.507, 0.308], "scale": 1.12, "note": "anchor = middle of his head; it is pinned to the centre of the helmet. Used on the pier." },
+    "catto-swim": { "file": "catto_swim", "anchor": [0.714, 0.379], "scale": 1.15, "note": "anchor = middle of his head. Used from the jump onwards." },
+    "catto-swim-shocked": { "file": "catto_shocked", "anchor": [0.714, 0.386], "scale": 1.15, "note": "anchor = middle of his head. Shown after a scare." },
+    "catto-swim-happy": { "file": "catto_happy", "anchor": [0.714, 0.39], "scale": 1.15, "note": "anchor = middle of his head. Shown at the treasure and on the ride up." },
 
     "clownfish": { "file": "clownfish", "anchor": [0.5, 0.5], "scale": 0.23, "note": "facing right" },
     "anemone-back": { "file": "anemone-back", "anchor": [0.5, 0.92], "scale": 0.62, "note": "anchor = where it sits on the rock" },
