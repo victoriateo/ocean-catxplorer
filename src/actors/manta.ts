@@ -1,6 +1,7 @@
 // Manta ray: big slow loops, drifts toward Catto out of curiosity, somersaults when he's close.
 import { world, cat } from '../core/state';
 import { clamp } from '../core/math';
+import { drawSprite, sprite } from '../assets/sprites';
 
 export const MANTA = {
   curiousR: 1.4,     // drifts toward Catto when within this × span
@@ -40,6 +41,8 @@ export function drawManta(ctx: CanvasRenderingContext2D) {
   if (y < -span || y > H + span) return;
   const belly = M.flip >= 0 ? Math.sin(Math.PI * M.flip) : 0, showBelly = belly > .55;
   const flap = 1 - .22 * Math.abs(Math.sin(t * 1.1)), sp = span * .5 * flap * (1 - .4 * belly), L = span * .55;
+  // painted: `span` is 3.2 × cat size unless the screen is narrow, so the image scales with it
+  if (drawSprite(ctx, showBelly && sprite('manta-belly') ? 'manta-belly' : 'manta', x, y, { unit: span / 3.2, rot: M.hd, sy: flap * (1 - .4 * belly) })) return;
   const body = showBelly ? '#efe6de' : '#20264a';
   ctx.save(); ctx.translate(x, y); ctx.rotate(M.hd);
   ctx.strokeStyle = '#20264a'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-L * .38, 0); ctx.quadraticCurveTo(-L * .8, Math.sin(t * 2) * L * .12, -L * 1.25, Math.sin(t * 2 + 1) * L * .08); ctx.stroke();

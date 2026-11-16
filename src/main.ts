@@ -14,6 +14,7 @@ import { initScene } from './scenes';
 import { initMeter } from './ui/meter';
 import { initCards } from './ui/cards';
 import { initFactCard } from './ui/factCard';
+import { loadArt } from './assets/sprites';
 
 function layout() {
   resizeLayers();
@@ -35,3 +36,4 @@ setPageHeight();
 addEventListener('resize', layout);
 layout();
 startLoop();
+loadArt();

@@ -3,6 +3,7 @@
 import { world } from '../core/state';
 import { mulberry } from '../core/math';
 import { makeBranch } from './reef';
+import { drawSprite, sprite } from '../assets/sprites';
 
 export const TRENCH = {
   gardenSeed: 42,
@@ -60,7 +61,9 @@ export function drawTrench(ctx: CanvasRenderingContext2D) {
   ctx.lineTo(W + 10, H + 10); ctx.lineTo(-10, H + 10); ctx.closePath(); ctx.fill();
   ctx.fillStyle = 'rgba(225,235,245,.25)';
   for (let i = 0; i < 60; i++) { const x = (i * 97) % W, y = fy + 8 + (i * 37) % 80; ctx.beginPath(); ctx.arc(x, y, 1 + i % 3 * .6, 0, 7); ctx.fill(); }
-  for (const d of deco) drawDeco(ctx, d, d.x - camX, d.y - camY);
+  const pile = !!sprite('pearls-gems');   // painted piles replace the loose pearls and gems (coins stay)
+  for (const d of deco) { if (pile && (d.type === 'pearl' || d.type === 'gem')) continue; drawDeco(ctx, d, d.x - camX, d.y - camY); }
+  if (pile) for (const side of [-1, 1]) drawSprite(ctx, 'pearls-gems', G.chestX - camX + side * G.s * 1.05, fy + 26, { flipX: side > 0 });
 }
 
 function drawDeco(ctx: CanvasRenderingContext2D, d: Deco, x: number, y: number) {

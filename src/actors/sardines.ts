@@ -3,6 +3,7 @@
 import { world, cat } from '../core/state';
 import { clamp, lerp } from '../core/math';
 import { depthOf } from '../core/depth';
+import { drawSprite } from '../assets/sprites';
 
 export const SARDINES = {
   count: 130,
@@ -60,6 +61,7 @@ function drawSilver(ctx: CanvasRenderingContext2D, f: Sardine, i: number) {
   const { W, H, t, sc, camX, camY } = world;
   const x = f.x - camX, y = f.y - camY; if (y < -20 || y > H + 20 || x < -30 || x > W + 30) return;
   const hd = Math.atan2(f.vy, f.vx);
+  if (drawSprite(ctx, 'sardine', x, y, { rot: hd, flipY: Math.cos(hd) < 0, k: f.s * (f.back ? .82 : 1) })) return;
   ctx.save(); ctx.translate(x, y); ctx.rotate(hd); if (Math.cos(hd) < 0) ctx.scale(1, -1);
   const k = f.s * sc * 1.2 * (f.back ? .82 : 1); ctx.scale(k, k);
   const sh = .5 + .5 * Math.sin(f.th * 2 + t * 2.5 + i);         // flash as they turn

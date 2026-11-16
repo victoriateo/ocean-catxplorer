@@ -1,6 +1,7 @@
 // Green sea turtle, cruising right → left. Bump into it to hitch a ride (handled in catto.ts).
 import { world } from '../core/state';
 import { clamp, lerp } from '../core/math';
+import { drawSprite } from '../assets/sprites';
 
 export const TURTLE = {
   size: .62,       // shell radius, × cat size
@@ -34,6 +35,7 @@ export function drawTurtle(ctx: CanvasRenderingContext2D) {
   const { W, H, t, camX, camY } = world;
   const T = turtle, x = T.x - camX, y = T.y - camY, r = T.r;
   if (y < -r * 2 || y > H + r * 2 || x < -r * 3 || x > W + r * 3) return;
+  if (drawSprite(ctx, 'turtle', x, y, { rot: Math.sin(t * .5) * .04 })) return;
   ctx.save(); ctx.translate(x, y); ctx.rotate(Math.sin(t * .5) * .04);
   const fl = Math.sin(t * 1.8), skin = '#ece6d8', skinD = '#cfc6b4', spot = '#a0937c', line = '#7a3a15';
   const flipper = (px: number, py: number, ang: number, len: number, wid: number, col: string) => {

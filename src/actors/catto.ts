@@ -8,6 +8,7 @@ import { mouse, IDLE_MS } from '../core/input';
 import { doSplash } from './splash';
 import { addBubble } from './bubbles';
 import { turtle, TURTLE } from './turtle';
+import { onArtLoaded, sprite, spriteDef } from '../assets/sprites';
 
 export const SWIM = {
   follow: 1.8,         // easing speed toward the cursor, per second
@@ -29,18 +30,56 @@ let prevU = 0, prevFinal: { x: number; y: number } | null = null;
 let tow: { t: number } | null = null, towCool = 0;
 let floorBounce = { vy: 0, t: 0, cool: 0 };
 /** Output of updateCatto, consumed by applyCattoDom / helmet bubbles. */
-const out = { rot: 0, sy: 1, ht: 0 };
+const out = { rot: 0, sy: 1, ht: 0, sitting: true };
+
+// ─── Painted Catto ───────────────────────────────────────────────────────────
+// The paintings sit inside #cat underneath the SVG; the SVG then shows only the helmet and lamp.
+// Each picture's anchor (the middle of his head, see assets/manifest.json) is pinned to the
+// centre of the helmet glass. Needs at least the sit and swim pictures; without the shocked or
+// happy one he keeps the plain swim pose.
+const POSES = ['catto-sit', 'catto-swim', 'catto-swim-shocked', 'catto-swim-happy'] as const;
+/** Centre of the helmet glass in the SVG's 200 × 220 box. */
+const HELMET_AT = [110 / 200, 80 / 220];
+const artEls = new Map<string, HTMLImageElement>();
+let painted = false, shownPose = '';
+
+function layoutArt() {
+  const { s, h } = world.G;
+  for (const name of POSES) {
+    const img = sprite(name), def = spriteDef(name); if (!img || !def) continue;
+    let el = artEls.get(name);
+    if (!el) { el = new Image(); el.src = img.src; el.alt = ''; el.className = 'art'; el.dataset.pose = name; catEl.insertBefore(el, catEl.firstChild); artEls.set(name, el); }
+    const w = def.scale * s, ht = w * img.naturalHeight / img.naturalWidth;
+    el.style.width = w + 'px'; el.style.height = ht + 'px';
+    el.style.left = HELMET_AT[0] * s - def.anchor[0] * w + 'px'; el.style.top = HELMET_AT[1] * h - def.anchor[1] * ht + 'px';
+    el.style.transformOrigin = `${def.anchor[0] * 100}% ${def.anchor[1] * 100}%`;
+    el.style.transform = def.rotate ? `rotate(${def.rotate}deg)` : '';
+  }
+  painted = artEls.has('catto-sit') && artEls.has('catto-swim');
+  catEl.classList.toggle('painted', painted);
+}
+
+function showPose() {
+  if (!painted) return;
+  let pose: string = out.sitting ? 'catto-sit' : cat.bang > 0 ? 'catto-swim-shocked' : cat.happy > 0 ? 'catto-swim-happy' : 'catto-swim';
+  if (!artEls.has(pose)) pose = 'catto-swim';
+  if (pose === shownPose) return;
+  shownPose = pose;
+  for (const [name, el] of artEls) el.classList.toggle('on', name === pose);
+}
 
 export function initCatto() {
   catEl = document.getElementById('cat')!;
   catEl.innerHTML = svgMarkup;
   helmet = catEl.querySelector('#helmet')!;
   lampEl = catEl.querySelector('#lamp')!;
+  onArtLoaded(name => { if (name.startsWith('catto-') && world.G.s) layoutArt(); });
 }
 
 export function sizeCatto() {
   const { s, h } = world.G;
   catEl.style.width = s + 'px'; catEl.style.height = h + 'px';
+  layoutArt();
 }
 
 export const isTowing = () => !!tow;
@@ -121,6 +160,7 @@ export function updateCatto(dt: number, now: number, us: number) {
   cat.x = cx; cat.y = cy; cat.rot = rot;
   out.rot = rot; out.sy = sy;
   out.ht = eio(seg(us, U.HELMET_A, U.HELMET_B));
+  out.sitting = us < U.JUMP_A;
 }
 
 export function applyCattoDom() {
@@ -129,6 +169,7 @@ export function applyCattoDom() {
   catEl.classList.toggle('swimming', cat.under);
   catEl.classList.toggle('shocked', cat.bang > 0);
   catEl.classList.toggle('happy', cat.happy > 0);
+  showPose();
   const ht = out.ht;
   helmet.setAttribute('transform', `translate(${lerp(-140, 0, ht)} ${lerp(70, 0, ht) - Math.sin(Math.PI * ht) * 110}) rotate(${lerp(-25, 0, ht)} 110 80)`);
   cat.wx = cat.x + world.camX; cat.wy = cat.y + world.camY;

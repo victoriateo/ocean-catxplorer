@@ -2,6 +2,7 @@
 // Catto bolts with the shocked face, and she resets after 4 s.
 import { world, cat } from '../core/state';
 import { clamp, lerp } from '../core/math';
+import { drawSprite, sprite, spritePoint } from '../assets/sprites';
 
 export const ANGLER = {
   leanR: 1.4,        // lure leans toward Catto within this × body length
@@ -55,6 +56,12 @@ export function drawAngler(ctx: CanvasRenderingContext2D, glow: boolean) {
     ctx.fillStyle = '#fff1b8'; ctx.shadowColor = 'rgba(255,220,120,1)'; ctx.shadowBlur = 22;
     ctx.beginPath(); ctx.moveTo(lx, ly - r * 1.6); ctx.quadraticCurveTo(lx + r * 1.2, ly, lx, ly + r); ctx.quadraticCurveTo(lx - r * 1.2, ly, lx, ly - r * 1.6); ctx.fill();
     ctx.shadowBlur = 0; return;
+  }
+  if (sprite('angler-closed')) {   // painted body; the stalk's last stretch and the lure stay in code
+    const name = A.jaw > .55 && sprite('angler-open') ? 'angler-open' : 'angler-closed', art = { unit: L / 1.5 };
+    const tip = spritePoint(name, 'stalkTip', art);
+    if (tip) { ctx.strokeStyle = '#6f8f88'; ctx.lineWidth = 3.5; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x + tip[0], y + tip[1]); ctx.quadraticCurveTo((x + tip[0] + lx) / 2, Math.min(y + tip[1], ly) - L * .04, lx, ly); ctx.stroke(); }
+    drawSprite(ctx, name, x, y, art); return;
   }
   ctx.save(); ctx.translate(x, y); ctx.scale(-1, 1);          // drawn facing right, flipped to face left
   const P = (u: number, v: number): [number, number] => [u * L, v * L];

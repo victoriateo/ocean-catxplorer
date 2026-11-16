@@ -2,6 +2,7 @@
 // Laid out with a seeded PRNG so the reef looks the same on every load.
 import { world } from '../core/state';
 import { lerp, mulberry, seg, type Rnd } from '../core/math';
+import { drawSprite } from '../assets/sprites';
 
 export const REEF = {
   seed: 7,
@@ -18,6 +19,10 @@ export interface Coral {
 }
 interface Boulder { side: number; y: number; r: number; ry: number; x: number; col: string; dots: number[][]; items: Coral[] }
 let boulders: Boulder[] = [];
+
+/** Coral type → painted image ('blue' has no painting and stays code-drawn). */
+const CORAL_ART: Record<string, string> = { frond: 'coral-frond', white: 'coral-white', sponge: 'coral-sponge', soft: 'coral-soft', fan: 'coral-fan', urchin: 'urchin' };
+const CORAL_SWAY: Record<string, [number, number]> = { frond: [1.3, .06], fan: [.8, .05] };   // [speed, radians]
 
 export function makeBranch(rnd: Rnd, size: number, tilt: number, depth = 3, wmul = 1) {
   const segs: Seg[] = [];
@@ -90,6 +95,7 @@ export function drawReef(ctx: CanvasRenderingContext2D) {
     if (!vis(b)) continue;
     const x = b.x - camX, y = b.y - camY;
     for (const it of b.items) drawCoral(ctx, it, it.x - camX, it.y - camY);
+    if (drawSprite(ctx, 'boulder', x, y, { unit: b.r * 2, sy: b.ry / b.r, flipX: b.side > 0 })) continue;
     ctx.fillStyle = b.col; ctx.beginPath(); ctx.ellipse(x, y, b.r, b.ry, 0, 0, 7); ctx.fill();
     ctx.save(); ctx.clip();
     ctx.fillStyle = 'rgba(120,130,235,.32)'; ctx.beginPath(); ctx.ellipse(x - b.r * .12, y - b.ry * .45, b.r * .85, b.ry * .5, 0, 0, 7); ctx.fill();
@@ -103,6 +109,8 @@ export function drawReef(ctx: CanvasRenderingContext2D) {
 export function drawCoral(ctx: CanvasRenderingContext2D, it: Coral, x: number, y: number) {
   const { t } = world;
   const s = it.s;
+  const art = CORAL_ART[it.type], sway = CORAL_SWAY[it.type];
+  if (art && drawSprite(ctx, art, x, y, { k: s / world.sc, flipX: it.side > 0, rot: sway ? Math.sin(t * sway[0] + it.ph) * sway[1] : 0 })) return;
   ctx.lineCap = 'round'; ctx.lineJoin = 'round';
   switch (it.type) {
     case 'frond':

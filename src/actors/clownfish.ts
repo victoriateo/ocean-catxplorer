@@ -2,6 +2,7 @@
 // comes close, then peek out again one at a time.
 import { world, nearCat } from '../core/state';
 import { lerp } from '../core/math';
+import { drawSprite } from '../assets/sprites';
 
 export const CLOWN = {
   hideR: 1.5,       // Catto within this × cat size → hide
@@ -37,6 +38,7 @@ export function updateClowns(dt: number) {
 function drawClown(ctx: CanvasRenderingContext2D, f: Clown) {
   const { H, t, sc, camX, camY } = world;
   const x = f.x - camX, y = f.y - camY; if (y < -40 || y > H + 40) return;
+  if (drawSprite(ctx, 'clownfish', x, y, { flipX: f.dir < 0, rot: Math.sin(t * 11 + f.ph) * .05 * f.dir })) return;
   ctx.save(); ctx.translate(x, y); const k = sc * 1.15; ctx.scale(f.dir * k, k);
   const O = '#ff7b1c', Od = '#e2560b', N = '#1f2a5c', Wt = '#fff8ef';
   ctx.lineJoin = 'round'; ctx.lineCap = 'round';
@@ -65,6 +67,7 @@ function drawClown(ctx: CanvasRenderingContext2D, f: Clown) {
 function drawAnemone(ctx: CanvasRenderingContext2D, layer: 0 | 1) {
   const { H, G, t, sc, camX, camY } = world;
   const x = G.anX - camX, y = G.aY - camY; if (y < -170 || y > H + 120) return;
+  if (drawSprite(ctx, layer ? 'anemone-front' : 'anemone-back', x, y + 8 * sc, { rot: Math.sin(t * 1.5 + layer) * .025 })) return;
   ctx.save(); ctx.translate(x, y); ctx.scale(sc, sc); ctx.lineCap = 'round';
   if (layer === 0) { ctx.fillStyle = '#5a2f96'; ctx.beginPath(); ctx.ellipse(0, 10, 44, 15, 0, 0, 7); ctx.fill(); }
   const sets: [number, number, string, string, number, number][] = layer === 0

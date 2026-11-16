@@ -97,7 +97,7 @@ const devUrl = server.resolvedUrls.local[0];
 const browser = await chromium.launch();
 try {
   const proto = await shoot(browser, pathToFileURL(path.join(root, 'reference/prototype.html')).href, 'prototype');
-  const build = await shoot(browser, devUrl, 'build');
+  const build = await shoot(browser, devUrl + '?art=off', 'build');   // parity is checked on the code-drawn versions
   const rows = [];
   for (let i = 0; i < STOPS.length; i++) {
     const stop = STOPS[i];

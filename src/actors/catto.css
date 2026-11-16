@@ -26,3 +26,14 @@
 /* Helmet glow underwater */
 #glass { transition: filter .6s; }
 .swimming #glass { filter: drop-shadow(0 0 14px rgba(170,240,255,.85)); }
+
+/* Painted Catto (see catto.ts): pictures under the SVG, which keeps only the helmet + lamp. */
+#cat .art { position: absolute; display: none; max-width: none; user-select: none; -webkit-user-drag: none; }
+#cat .art.on { display: block; }
+#cat.painted svg { position: relative; }
+#cat.painted svg > :not(defs):not(#helmet) { display: none; }
+/* stand-ins for the rig's leg kick and the shocked head-pop */
+#cat.painted.swimming .art.on { animation: paddle 1.1s ease-in-out infinite; }
+@keyframes paddle { 0%, 100% { rotate: -1.5deg; } 50% { rotate: 1.5deg; } }
+#cat.painted.shocked .art.on { animation: artpop .35s ease-out; }
+@keyframes artpop { 0% { scale: .9; } 60% { scale: 1.08; } 100% { scale: 1; } }

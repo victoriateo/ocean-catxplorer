@@ -3,3 +3,8 @@ dist
 compare-out
 .DS_Store
 .vercel
+# original paintings are large; the site uses the web-ready copies in public/art/
+assets/*.png
+assets/*.jpg
+assets/*.jpeg
+assets/*.webp

@@ -1,7 +1,8 @@
 // The treasure chest on the trench floor. Catto comes close → lid opens, coins burst out,
 // a glowing tin of sardines floats up, Catto gets the happy face.
 import { world, cat } from '../core/state';
-import { clamp, eout } from '../core/math';
+import { clamp, eout, seg } from '../core/math';
+import { drawSprite, sprite } from '../assets/sprites';
 
 export const CHEST = {
   size: .62,         // × cat size
@@ -37,6 +38,7 @@ export function drawChest(ctx: CanvasRenderingContext2D, layer: 'halo' | 'box' |
   const x = G.chestX - camX, fy = G.floorY - camY, S = G.s * CHEST.size, o = chest.open;
   if (fy < -S * 3 || fy > H + S * 3) return;
   const y = fy - S * .4;
+  const painted = !!sprite('chest-closed') && !!sprite('chest-open');   // needs both, or the lid could never open
   const blue = '#2f4f9a', blueD = '#243d78', gold = '#e3b448', goldD = '#b8862c';
   if (layer === 'halo') {   // warm pool of light, drawn behind the chest
     const a = .3 + o * .45 + .08 * Math.sin(t * 2);
@@ -46,7 +48,7 @@ export function drawChest(ctx: CanvasRenderingContext2D, layer: 'halo' | 'box' |
     return;
   }
   if (layer === 'glow') {
-    if (o < .5) { ctx.strokeStyle = 'rgba(255,225,140,.95)'; ctx.lineWidth = 2.5; ctx.shadowColor = 'rgba(255,210,110,1)'; ctx.shadowBlur = 12; ctx.beginPath(); ctx.moveTo(x - S * .5, y - S * .3); ctx.lineTo(x + S * .5, y - S * .3); ctx.stroke(); ctx.shadowBlur = 0; }
+    if (o < .5 && !painted) { ctx.strokeStyle = 'rgba(255,225,140,.95)'; ctx.lineWidth = 2.5; ctx.shadowColor = 'rgba(255,210,110,1)'; ctx.shadowBlur = 12; ctx.beginPath(); ctx.moveTo(x - S * .5, y - S * .3); ctx.lineTo(x + S * .5, y - S * .3); ctx.stroke(); ctx.shadowBlur = 0; }
     if (o > .02) {   // the prize: a glowing tin of sardines floats up out of the chest
       const rise = eout(clamp(o * 1.15));
       const tx = x - S * .1, ty = y - S * .45 - rise * S * 2.1 + Math.sin(t * 2) * 5, k = .6 + rise * .5;
@@ -59,6 +61,8 @@ export function drawChest(ctx: CanvasRenderingContext2D, layer: 'halo' | 'box' |
       ctx.globalAlpha = 1;
       ctx.save(); ctx.translate(tx, ty); ctx.rotate(Math.sin(t * 1.6) * .12); ctx.scale(k, k); ctx.globalAlpha = clamp(o * 2);
       ctx.shadowColor = 'rgba(255,230,150,1)'; ctx.shadowBlur = 24;
+      if (drawSprite(ctx, 'sardine-tin', 0, 0)) { ctx.restore(); ctx.shadowBlur = 0; }
+      else {
       ctx.fillStyle = '#d7e0ea'; ctx.beginPath(); ctx.roundRect(-S * .5, -S * .25, S, S * .5, S * .22); ctx.fill(); ctx.shadowBlur = 0;
       ctx.strokeStyle = '#8f9cab'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.roundRect(-S * .43, -S * .18, S * .86, S * .36, S * .16); ctx.stroke();
       ctx.fillStyle = '#5b8fd6'; ctx.beginPath(); ctx.ellipse(-S * .04, 0, S * .22, S * .09, 0, 0, 7); ctx.fill();
@@ -66,10 +70,17 @@ export function drawChest(ctx: CanvasRenderingContext2D, layer: 'halo' | 'box' |
       ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(-S * .16, -S * .015, S * .022, 0, 7); ctx.fill();
       ctx.strokeStyle = '#b8c3cf'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(S * .36, 0, S * .06, 0, 7); ctx.stroke();   // ring pull
       ctx.restore();
+      }
     }
     ctx.fillStyle = '#ffd56a';
     for (const c of chest.coins) { ctx.globalAlpha = clamp(c.life); ctx.beginPath(); ctx.ellipse(c.x - camX, c.y - camY, c.r, c.r * .7, 0, 0, 7); ctx.fill(); }
     ctx.globalAlpha = 1;
+    return;
+  }
+  if (painted) {   // closed painting cross-fades to the open one
+    const k = seg(o, .25, .7);
+    if (k < 1) drawSprite(ctx, 'chest-closed', x, fy);
+    if (k > 0) drawSprite(ctx, 'chest-open', x, fy, { alpha: k });
     return;
   }
   // box: navy with gold trim, stars and a keyhole

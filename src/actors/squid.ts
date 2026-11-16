@@ -3,6 +3,7 @@
 import { world, cat } from '../core/state';
 import { angLerp, mix } from '../core/math';
 import { isLit } from '../render/night';
+import { drawSprite } from '../assets/sprites';
 
 export const SQUID = {
   startleR: 1.3,     // startles if Catto is within this × cat size…
@@ -59,6 +60,7 @@ export function drawInk(ctx: CanvasRenderingContext2D) {
 export function drawSquid(ctx: CanvasRenderingContext2D, glow: boolean) {
   const { H, G, t, camX, camY } = world;
   const Q = squid, x = Q.x - camX, y = Q.y - camY, Ls = G.s * .9; if (y < -Ls * 2 || y > H + Ls * 2) return;
+  if (!glow && drawSprite(ctx, 'squid', x, y, { rot: Q.ang, flipY: Math.cos(Q.ang) < 0 })) return;
   ctx.save(); ctx.translate(x, y); ctx.rotate(Q.ang);
   if (glow) {
     ctx.fillStyle = `rgba(150,205,255,${.7 + Q.flash * .3})`; ctx.shadowColor = 'rgba(150,205,255,.9)'; ctx.shadowBlur = 10 + Q.flash * 20;

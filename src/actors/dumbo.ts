@@ -2,6 +2,7 @@
 // Say hi and she swims alongside Catto for ~6 s, then goes home. Never leaves her depth band.
 import { world, cat } from '../core/state';
 import { lerp } from '../core/math';
+import { drawSprite } from '../assets/sprites';
 
 export const DUMBO = {
   size: .42,         // body radius, × cat size
@@ -39,6 +40,7 @@ export function drawDumbo(outer: CanvasRenderingContext2D, alpha: number) {
   const { H, DPR, t, camX, camY } = world;
   const D = dumbo, R = D.R, x = D.x - camX, y = D.y - camY;
   if (y < -R * 3 || y > H + R * 3) return;
+  if (drawSprite(outer, 'dumbo', x, y, { rot: Math.sin(t * 1.2) * .08, alpha, sy: 1 + Math.sin(D.ph * .6) * .03 })) return;
   // draw at full opacity off-screen first, so overlapping parts read as one shape when faded
   const S = Math.ceil(R * 3.4);
   if (dumboC.width !== Math.round(S * DPR)) { dumboC.width = dumboC.height = Math.round(S * DPR); }

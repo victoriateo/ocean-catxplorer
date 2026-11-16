@@ -1,6 +1,7 @@
 // Scene 0 · Pier: warm sky, sun, clouds, gulls, distant hills (with parallax) and the wooden pier.
 import { world } from '../core/state';
 import { clamp, mod } from '../core/math';
+import { drawSprite } from '../assets/sprites';
 
 /** Parallax factors (how much each layer moves with the camera). */
 export const SKY = {
@@ -31,6 +32,9 @@ export function drawSky(ctx: CanvasRenderingContext2D, wl: number) {
   const g = ctx.createLinearGradient(0, wl - H * .75, 0, wl);
   g.addColorStop(0, '#7cc6df'); g.addColorStop(.55, '#c4e6e6'); g.addColorStop(1, '#ffe0bf');
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, Math.max(0, wl + 30));
+  // painted sky replaces the sun, clouds and hills; the gulls stay
+  const painted = drawSprite(ctx, 'bg-sky', -camX * SKY.cloudX, wl + 2, { unit: W });
+  if (!painted) {
   const sx = W * .8 - camX * SKY.sunX, sy = (G.WL - H * .46) - camY * SKY.sunY;
   const sg = ctx.createRadialGradient(sx, sy, 10, sx, sy, 150);
   sg.addColorStop(0, 'rgba(255,246,214,.95)'); sg.addColorStop(.25, 'rgba(255,236,190,.6)'); sg.addColorStop(1, 'rgba(255,236,190,0)');
@@ -47,6 +51,7 @@ export function drawSky(ctx: CanvasRenderingContext2D, wl: number) {
   ctx.quadraticCurveTo(hx + W * .82, wl - H * .1, hx + W * .95, wl - H * .02);
   ctx.quadraticCurveTo(hx + W * 1.1, wl - H * .08, hx + W * 1.3, wl - H * .03);
   ctx.lineTo(hx + W * 1.4, wl + 4); ctx.closePath(); ctx.fill();
+  }
   ctx.strokeStyle = '#4b5d6e'; ctx.lineWidth = 2; ctx.lineCap = 'round';
   for (let i = 0; i < 3; i++) {
     const gx = mod(t * (22 + i * 6) + i * 260 - camX * SKY.gullX, W + 100) - 50;
@@ -61,6 +66,7 @@ export function drawPier(ctx: CanvasRenderingContext2D) {
   const { H, G, camX, camY } = world;
   const d = G.deckY - camY, end = G.pierEnd - camX, wl = G.WL - camY;
   if (end < -60 || d > H + 40) return;
+  if (drawSprite(ctx, 'pier', end, d)) return;
   const bottom = wl + H * .5;
   const post = (x: number) => {
     const g = ctx.createLinearGradient(0, d, 0, bottom);

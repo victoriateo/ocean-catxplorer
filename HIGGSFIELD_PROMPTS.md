@@ -4,7 +4,7 @@
 1. **Do Catto first** and don't move on until you love him. Everything else is styled to match him.
 2. Lock Catto's look by using your chosen image as the **reference image** for every Catto pose (or try Soul ID). Paste the same **character line** into every Catto prompt and change only the pose.
 3. End **every** prompt with the same **style line** so all the art matches.
-4. Ask for a **plain flat light-grey background**, then remove it (Finder → right-click → Quick Actions → Remove Background) so you get a transparent PNG.
+4. Ask for a **plain flat light-grey background**. The site cuts a flat background away by itself when it prepares the image. If an edge comes out rough, remove the background yourself instead (Finder → right-click → Quick Actions → Remove Background) and save the transparent PNG over it.
 5. Save the files into `catxplorer/assets/` with the **exact filenames** below. The site uses each image as soon as the file appears, and keeps the code-drawn version until then.
 6. Generate at 2048 px on the long side where you can, and upscale the keepers.
 7. Describe the style in words. Don't name artists or feed in other people's illustrations to copy.
@@ -22,10 +22,10 @@
 ## Catto (side ¾ view, facing right)
 | File | Prompt (+ character line + style line) |
 |---|---|
-| `catto-sit.png` | sitting upright on his bottom, tail curled around, looking up happily, full body |
+| `catto-sitting.png` | sitting upright on his bottom, tail curled around, looking up happily, full body |
 | `catto-swim.png` | swimming pose, body slightly tilted forward, front paws reaching ahead, flippers kicking behind, calm curious expression, full body |
-| `catto-swim-shocked.png` | same swimming pose, startled: huge round wide eyes with tiny pupils, small "o" mouth, little blue sweat drop, ears perked, cute not scary |
-| `catto-swim-happy.png` | same swimming pose, overjoyed: eyes closed in happy ^ ^ curves, big open smile, strong blush |
+| `catto-shocked.png` | same swimming pose, startled: huge round wide eyes with tiny pupils, small "o" mouth, little blue sweat drop, ears perked, cute not scary |
+| `catto-happy.png` | same swimming pose, overjoyed: eyes closed in happy ^ ^ curves, big open smile, strong blush |
 
 ## Reef
 | File | Prompt (+ style line) |

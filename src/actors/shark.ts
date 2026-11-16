@@ -3,6 +3,7 @@
 import { world, cat, nearCat } from '../core/state';
 import { clamp } from '../core/math';
 import { isLit } from '../render/night';
+import { drawSprite, spritePoint } from '../assets/sprites';
 
 export const SHARK = {
   turnR: 1.2,        // turns away if Catto is within this × cat size of its head
@@ -43,10 +44,13 @@ export function drawShark(ctx: CanvasRenderingContext2D, glow: boolean) {
   const { W, H, t, camX, camY } = world;
   const K = shark, x = K.x - camX, y = K.y - camY, L = K.L;
   if (x < -L || x > W + L || y < -L * .4 || y > H + L * .4) return;
+  const art = { unit: L / 3 };   // L is 3 × cat size (clamped), so the image follows it
+  if (!glow && drawSprite(ctx, 'shark', x, y, { ...art, sx: K.face })) return;
+  const eye = spritePoint('shark', 'eye', art) ?? [L * .39, -L * .035];
   ctx.save(); ctx.translate(x, y); ctx.scale(K.face, 1);
   if (glow) {   // fluorescent green eyes glint in the dark
     ctx.fillStyle = 'rgba(140,255,180,.95)'; ctx.shadowColor = 'rgba(120,255,170,1)'; ctx.shadowBlur = 12;
-    ctx.beginPath(); ctx.ellipse(L * .39, -L * .035, L * .017, L * .011, 0, 0, 7); ctx.fill(); ctx.shadowBlur = 0; ctx.restore(); return;
+    ctx.beginPath(); ctx.ellipse(eye[0], eye[1], L * .017, L * .011, 0, 0, 7); ctx.fill(); ctx.shadowBlur = 0; ctx.restore(); return;
   }
   const sw = (u: number) => Math.sin(t * 2.4 - u * 3) * L * .045 * Math.max(0, .15 - u);   // tail sway (u = x / L)
   const P = (u: number, v: number): [number, number] => [u * L, v * L + sw(u)];
