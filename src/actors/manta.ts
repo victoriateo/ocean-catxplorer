@@ -16,7 +16,7 @@ export const manta = { ang: 0, cx: 0, cy: 0, span: 0, flip: -1, cool: 0, x: 0, y
 
 export function initManta() {
   const { W, G } = world, ox = G.ox;
-  Object.assign(manta, { ang: 0, cx: ox + W * .5, cy: G.mantaY, span: clamp(W * .42, 260, G.s * 3.2), flip: -1, cool: 0, x: 0, y: 0, hd: 0, spots: [] });
+  Object.assign(manta, { ang: 0, cx: ox + W * .5, cy: G.mantaY, span: clamp(W * .42, 260, G.s * 3.2), flip: -1, cool: 0, x: ox + W * .78, y: G.mantaY, hd: Math.PI / 2, spots: [] });   // start where its loop starts (it isn't simulated until it is nearly on screen)
   for (let u = -.42; u < .46; u += .045) for (let v = -1; v <= 1; v += .085) manta.spots.push([u + (Math.random() - .5) * .025, v + (Math.random() - .5) * .05, .8 + Math.random() * .6, Math.random() < .3 ? Math.random() * 3 : -1]);
 }
 

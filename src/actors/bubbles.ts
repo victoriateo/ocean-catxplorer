@@ -5,6 +5,7 @@ import { addRipple } from './splash';
 export const BUBBLES = {
   interval: [.18, .3],   // helmet bubble every interval[0] + rand·interval[1] seconds
   ascendInterval: .03,   // …much faster on the ride back up
+  reduceSlow: 2.2,       // reduced motion: this many times fewer helmet bubbles
   wobble: .35,           // sideways wobble per frame
   popRipple: .3,         // chance a bubble leaves a tiny ripple when it pops at the surface
 };
@@ -21,7 +22,7 @@ export function emitHelmetBubbles(dt: number, wx: number, wy: number, rot: numbe
   const { s, h } = world.G;
   bubbleT -= dt;
   if (bubbleT < 0) {
-    bubbleT = ascending ? BUBBLES.ascendInterval : BUBBLES.interval[0] + Math.random() * BUBBLES.interval[1];
+    bubbleT = (ascending ? BUBBLES.ascendInterval : BUBBLES.interval[0] + Math.random() * BUBBLES.interval[1]) * (world.reduce ? BUBBLES.reduceSlow : 1);
     const ox = (118 - 100) / 200 * s * facing, oy = (12 - 110) / 220 * h, a = rot * Math.PI / 180;
     bubbles.push({ x: wx + ox * Math.cos(a) - oy * Math.sin(a), y: wy + ox * Math.sin(a) + oy * Math.cos(a), r: 2 + Math.random() * 4, vy: .8 + Math.random() * .8, ph: Math.random() * 6 });
   }

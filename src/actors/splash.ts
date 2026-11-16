@@ -8,6 +8,7 @@ export const SPLASH = {
   drops: 80,          // droplets per splash
   crown: 24,          // of which this many form the tall crown
   bubbles: 45,        // burst of bubbles under the surface
+  reduceScale: .35,   // reduced motion: this share of the droplets and bubbles
   gravity: .38,       // droplet gravity (per 60 fps frame, × H/800)
   rippleGrow: 2.4,    // ripple radius growth per frame
   rippleFade: .7,     // ripple alpha lost per second
@@ -28,15 +29,15 @@ export const addRipple = (r: Ripple) => { ripples.push(r); };
 export function doSplash(x: number) {
   sfx('splash');
   const { H, G } = world;
-  const k = H / 800;
-  for (let i = 0; i < SPLASH.drops; i++) {
-    const crown = i < SPLASH.crown;
+  const k = H / 800, q = world.reduce ? SPLASH.reduceScale : 1;
+  for (let i = 0; i < SPLASH.drops * q; i++) {
+    const crown = i < SPLASH.crown * q;
     drops.push({ x: x + (Math.random() - .5) * (crown ? 30 : 60), y: G.WL - 2,
       vx: (Math.random() - .5) * (crown ? 3 : 8), vy: -(crown ? 9 + Math.random() * 6 : 3 + Math.random() * 8) * k,
       r: crown ? 3 + Math.random() * 4 : 1.5 + Math.random() * 3 });
   }
   ripples.push({ x, r: 4, a: .9 }, { x, r: -24, a: .8 }, { x, r: -52, a: .7 });
-  for (let i = 0; i < SPLASH.bubbles; i++) addBubble({ x: x + (Math.random() - .5) * 90, y: G.WL + 20 + Math.random() * G.h, r: 2 + Math.random() * 6, vy: 1 + Math.random() * 1.6, ph: Math.random() * 6 });
+  for (let i = 0; i < SPLASH.bubbles * q; i++) addBubble({ x: x + (Math.random() - .5) * 90, y: G.WL + 20 + Math.random() * G.h, r: 2 + Math.random() * 6, vy: 1 + Math.random() * 1.6, ph: Math.random() * 6 });
   if (!world.reduce) shake = 1;
 }
 

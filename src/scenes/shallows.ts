@@ -1,6 +1,6 @@
 // Scene 1 · Shallows: the sea itself — colour by depth, waves, light rays, drifting specks,
 // the waterline highlight, the translucent front tint and the edge vignette.
-import { world } from '../core/state';
+import { world, lite } from '../core/state';
 import { mix, mod, seg } from '../core/math';
 import { REEF_LEN } from '../core/timeline';
 import { drawReef } from './reef';
@@ -10,6 +10,7 @@ export const SEA = {
   shallow: '#2f93a6',
   deep0: '#1f8399', deep1: '#0a2f42', deep2: '#071a36',
   motes: 170,
+  motesLite: 90,        // on phones / reduced motion
   rays: 7,
 };
 
@@ -19,7 +20,7 @@ let motes: Mote[] = [];
 export function initMotes() {
   const { W, H, G } = world;
   motes = [];
-  for (let i = 0; i < SEA.motes; i++) motes.push({ x: Math.random() * W, y: G.WL + Math.random() * H * 6.2, r: .6 + Math.random() * 1.6, ph: Math.random() * 6 });
+  for (let i = 0, n = lite() ? SEA.motesLite : SEA.motes; i < n; i++) motes.push({ x: Math.random() * W, y: G.WL + Math.random() * H * 6.2, r: .6 + Math.random() * 1.6, ph: Math.random() * 6 });
 }
 
 export const wave = (x: number, t: number) => Math.sin(x * .018 + t * 1.7) * 3.5 + Math.sin(x * .0065 - t * 1.1) * 5;

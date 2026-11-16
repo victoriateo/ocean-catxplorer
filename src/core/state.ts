@@ -10,8 +10,16 @@ export const world = {
   t: 0,
   camX: 0, camY: 0,
   G: {} as Geometry,
-  reduce: typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches,
+  /** The visitor asked their device for less motion (kept up to date if they change it). */
+  reduce: false,
 };
+if (typeof matchMedia !== 'undefined') {
+  const mq = matchMedia('(prefers-reduced-motion: reduce)');
+  world.reduce = mq.matches;
+  mq.addEventListener?.('change', e => { world.reduce = e.matches; });
+}
+/** Fewer particles: on phones (performance) and when reduced motion is on. */
+export const lite = () => world.mobile || world.reduce;
 
 /** Catto, as other actors see him. */
 export const cat = {

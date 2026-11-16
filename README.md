@@ -36,6 +36,18 @@ one with a recording, save a file named after it into `assets/audio/` (the names
 muffling and how often bubbles and rumbles happen are in the `AUDIO` block at the top of
 `src/audio/audio.ts`. Commit `public/audio/`.
 
+## Phones, reduced motion, keyboard
+
+- **Phones** (narrower than 700 px): fewer fish, sardines, specks and snow; narrower reef walls;
+  tick labels hidden; cards full width. Tap to steer. The scene is sized to the phone's large
+  viewport, so the address bar sliding in and out never resets it.
+- **Reduced motion** (the visitor's device setting): no screen shake, fewer particles, no looping
+  decorative animation, and "Swim back up" jumps straight to the pier.
+- **Keyboard**: normal scrolling keys work; Tab reaches the sound button and, once it is showing,
+  "Swim back up" and the credit link.
+- **Performance**: creatures more than about a screen away are not simulated (`CULL_SCREENS` in
+  `src/scenes/index.ts`), the darkness layer is painted at half resolution, and DPR is capped at 2.
+
 ## Where things live
 
 - `src/core/timeline.ts`: **all the scroll/timing/geometry numbers** (start here to tweak the feel)

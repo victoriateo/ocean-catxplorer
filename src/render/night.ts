@@ -5,6 +5,7 @@ import { angler } from '../actors/angler';
 import { chest } from '../actors/chest';
 
 export const NIGHT = {
+  res: .5,                                    // the darkness is all soft gradients, so it is painted at half resolution (4× cheaper)
   colour: '9,24,58',                          // r,g,b of the darkness: deep navy (prototype: near-black 2,8,20)
   coneLen: 3.4,                               // lamp cone length, × cat size
   coneTilt: .22,                              // cone points this many rad below horizontal
@@ -20,7 +21,7 @@ const nightC = document.createElement('canvas');
 const nx = nightC.getContext('2d')!;
 
 export function resizeNight() {
-  nightC.width = Math.round(world.W * world.DPR); nightC.height = Math.round(world.H * world.DPR);
+  nightC.width = Math.round(world.W * world.DPR * NIGHT.res); nightC.height = Math.round(world.H * world.DPR * NIGHT.res);
 }
 
 const coneAngle = () => (light.lamp.dir > 0 ? NIGHT.coneTilt : Math.PI - NIGHT.coneTilt);
@@ -39,7 +40,7 @@ export function isLit(wx: number, wy: number) {
 export function drawNight(ctx: CanvasRenderingContext2D) {
   const { W, H, G, DPR, camX, camY } = world, { lampK, night, lamp } = light;
   if (night <= .01) return;
-  nx.setTransform(DPR, 0, 0, DPR, 0, 0); nx.globalCompositeOperation = 'source-over'; nx.clearRect(0, 0, W, H);
+  nx.setTransform(DPR * NIGHT.res, 0, 0, DPR * NIGHT.res, 0, 0); nx.globalCompositeOperation = 'source-over'; nx.clearRect(0, 0, W, H);
   nx.fillStyle = `rgba(${NIGHT.colour},${night})`; nx.fillRect(0, 0, W, H);
   const L = G.s * NIGHT.coneLen, ang = coneAngle();
   if (lampK > 0) {

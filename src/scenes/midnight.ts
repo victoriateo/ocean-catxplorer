@@ -1,11 +1,12 @@
 // Scene 4 · Midnight zone: almost total darkness and marine snow drifting down.
 // (Anglerfish + dumbo octopus live in actors/.)
-import { world, light } from '../core/state';
+import { world, light, lite } from '../core/state';
 import { mod, seg } from '../core/math';
 import { MID_LEN, ABY_LEN } from '../core/timeline';
 
 export const SNOW = {
   count: 220,
+  countLite: 110,  // on phones / reduced motion
   fall: .35,       // px per frame
   sway: .15,
   parallax: .2,    // horizontal parallax with the camera
@@ -16,7 +17,7 @@ let snow: Flake[] = [];
 
 export function initSnow() {
   const { W, H, G } = world;
-  snow = Array.from({ length: SNOW.count }, () => ({ x: Math.random() * W, y: G.M0 - H * .6 + Math.random() * H * (MID_LEN + ABY_LEN + 1.2), r: .6 + Math.random() * 1.4, ph: Math.random() * 6 }));
+  snow = Array.from({ length: lite() ? SNOW.countLite : SNOW.count }, () => ({ x: Math.random() * W, y: G.M0 - H * .6 + Math.random() * H * (MID_LEN + ABY_LEN + 1.2), r: .6 + Math.random() * 1.4, ph: Math.random() * 6 }));
 }
 
 export function updateSnow(step: number) {

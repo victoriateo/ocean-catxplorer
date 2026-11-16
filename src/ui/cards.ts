@@ -1,5 +1,6 @@
 // Title, scroll hint, the "Ooh, fishies" card and the end card with its "Swim back up" button.
-import { cat } from '../core/state';
+import { cat, world } from '../core/state';
+import { scroll } from '../core/scroll';
 import { clamp, eio, seg } from '../core/math';
 import { UI_FADE, ASCEND_MS } from '../core/timeline';
 import { chest } from '../actors/chest';
@@ -16,6 +17,7 @@ export function initCards() {
 /** Eases the scroll back to the top; Catto rides up with a stream of bubbles. */
 export function ascend() {
   if (cat.ascending) return;
+  if (world.reduce) { scrollTo(0, 0); scroll.u = scroll.us = 0; cat.happy = 2; return; }   // reduced motion: no fly-through, just be back on the pier
   cat.ascending = true; cat.happy = 99; sfx('ascend');
   const from = scrollY, t0 = performance.now();
   const stepUp = (now: number) => {
@@ -34,6 +36,8 @@ export function updateCards(us: number) {
   el.card1.style.opacity = String(c1);
   const c2 = cat.ascending ? 0 : seg(chest.open, .6, .95);
   el.card2.style.opacity = String(c2); el.card2.style.pointerEvents = c2 > .5 ? 'auto' : 'none';
-  el.credit.style.opacity = String(c2); el.credit.style.pointerEvents = c2 > .5 ? 'auto' : 'none';   // credit appears with the end card
+  el.credit.style.opacity = String(c2); el.credit.style.pointerEvents = c2 > .5 ? 'auto' : 'none';
+  // while hidden, keep the button and link out of the tab order and away from screen readers
+  const hidden = c2 <= .5; if (el.card2.inert !== hidden) { el.card2.inert = hidden; el.credit.inert = hidden; }   // credit appears with the end card
   return c2;
 }

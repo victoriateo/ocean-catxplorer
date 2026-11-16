@@ -4,6 +4,7 @@ import { angLerp, lerp } from '../core/math';
 
 export const FISH = {
   count: 18,
+  countMobile: 10,     // fewer on phones
   shallow: 8,          // the first N live near the surface, the rest along the reef
   scatterR: .95,       // flee radius, × cat size
   fleeBoost: 4,        // speed multiplier at point-blank range
@@ -16,8 +17,9 @@ let fish: Fish[] = [];
 export function initFish() {
   const { W, H, G, sc } = world, ox = G.ox;
   fish = [];
-  for (let i = 0; i < FISH.count; i++) {
-    const shallow = i < FISH.shallow;
+  const n = world.mobile ? FISH.countMobile : FISH.count, nShallow = world.mobile ? Math.round(FISH.shallow * FISH.countMobile / FISH.count) : FISH.shallow;
+  for (let i = 0; i < n; i++) {
+    const shallow = i < nShallow;
     const top = shallow ? G.WL + H * .38 : G.R0 + H * .2, bot = shallow ? G.WL + H * 1.15 : G.R0 + H * 3.2;
     fish.push({ x: ox + Math.random() * W, y: lerp(top, bot, Math.random()), top, bot, a: Math.random() * 6.28,
       v: .6 + Math.random() * .5, s: (.9 + Math.random() * .6) * sc, ph: Math.random() * 6, c: i % 3 ? '#e9545e' : '#f2774f' });

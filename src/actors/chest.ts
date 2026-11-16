@@ -84,7 +84,7 @@ export function updateChest(dt: number, step: number) {
   if (chest.opened) chest.tin = Math.min(1, chest.tin + dt / CHEST.tinTime);
   // coins pouring out after a click
   if (chest.flow > 0) {
-    chest.flow -= dt; chest.flowAcc += CHEST.flowRate * dt; sfx('coins', .8);   // jingles for as long as they pour (the sound limits its own repeat rate)
+    chest.flow -= dt; chest.flowAcc += CHEST.flowRate * (world.reduce ? .4 : 1) * dt; sfx('coins', .8);   // jingles for as long as they pour (the sound limits its own repeat rate)
     while (chest.flowAcc >= 1) { chest.flowAcc--; spawnCoin(chest.flowKeep, (Math.random() - .5) * S * .7, (Math.random() - .5) * 7.5 * sc, -(4 + Math.random() * 5)); }
   }
   for (const c of chest.coins) {
@@ -182,7 +182,9 @@ export function drawChest(ctx: CanvasRenderingContext2D, layer: 'halo' | 'box' |
       }
       ctx.globalAlpha = 1;
       ctx.save(); ctx.translate(tx, ty); ctx.rotate(Math.sin(t * 1.6) * .12); ctx.scale(k, k); ctx.globalAlpha = clamp(chest.tin * 6);
-      ctx.shadowColor = 'rgba(255,230,150,1)'; ctx.shadowBlur = 24;
+      // glow: a soft gradient behind the tin (far cheaper to draw than a blurred shadow)
+      const tg = ctx.createRadialGradient(0, 0, TS * .2, 0, 0, TS * .85); tg.addColorStop(0, 'rgba(255,230,150,.6)'); tg.addColorStop(1, 'rgba(255,230,150,0)');
+      ctx.fillStyle = tg; ctx.beginPath(); ctx.arc(0, 0, TS * .85, 0, 7); ctx.fill();
       if (!drawSprite(ctx, 'sardine-tin', 0, 0)) drawTin(ctx, TS, t);
       ctx.restore();
     }

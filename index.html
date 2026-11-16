@@ -5,16 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ocean Catxplorer</title>
 <meta name="description" content="Ocean Catxplorer: join Catto on a sunset dive. Meet curious creatures and discover what awaits in the deepest dark.">
+<meta name="theme-color" content="#0c3a50">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='12' fill='%230c3a50'/%3E%3Cg fill='%23f6b45a'%3E%3Cellipse cx='12' cy='14.5' rx='4.4' ry='3.6'/%3E%3Ccircle cx='7.2' cy='10' r='1.8'/%3E%3Ccircle cx='10.3' cy='7.4' r='1.8'/%3E%3Ccircle cx='13.7' cy='7.4' r='1.8'/%3E%3Ccircle cx='16.8' cy='10' r='1.8'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-<div id="stage">
+<main>
+<div id="stage" role="img" aria-label="An illustrated dive: Catto, an orange kitten in a goldfish-bowl helmet, jumps off a pier at sunset and swims down past reef fish, a turtle, jellyfish, a manta ray, a shark, a squid, an anglerfish and a dumbo octopus to a treasure chest on the sea floor.">
   <canvas id="back"></canvas>
   <div id="cat"></div>
   <canvas id="front"></canvas>
 </div>
-<div id="grain"></div>
+<div id="grain" aria-hidden="true"></div>
 
 <div class="ui" id="title">
   <h1>Ocean Catxplorer</h1>
@@ -35,7 +39,7 @@
     <div class="tick" style="top:42%">MIDNIGHT</div>
     <div class="tick" style="top:66%">ABYSS</div>
     <div class="tick" style="top:88%">TRENCH</div>
-    <svg id="paw" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#fff6ea"/><g fill="#d9822b"><ellipse cx="12" cy="14.5" rx="4.2" ry="3.4"/><circle cx="7.4" cy="10" r="1.7"/><circle cx="10.4" cy="7.6" r="1.7"/><circle cx="13.6" cy="7.6" r="1.7"/><circle cx="16.6" cy="10" r="1.7"/></g></svg>
+    <svg id="paw" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#fff6ea"/><g fill="#d9822b"><ellipse cx="12" cy="14.5" rx="4.2" ry="3.4"/><circle cx="7.4" cy="10" r="1.7"/><circle cx="10.4" cy="7.6" r="1.7"/><circle cx="13.6" cy="7.6" r="1.7"/><circle cx="16.6" cy="10" r="1.7"/></g></svg>
   </div>
 </div>
 
@@ -54,12 +58,14 @@
 
 <div class="ui" id="credit">Made with ❤️ A vibe-coding experiment by <a href="https://www.linkedin.com/in/victoriateowx/" target="_blank" rel="noopener">Victoria Teo</a></div>
 
-<div class="ui" id="fact">
+<div class="ui" id="fact" aria-live="polite">
   <div class="eyebrow" id="factEyebrow">MEET THE LOCALS</div>
   <h3 id="factTitle"></h3>
   <p id="factBody"></p>
 </div>
 
+</main>
+<noscript><p style="position:fixed;inset:0;display:grid;place-items:center;margin:0;padding:24px;background:#0c3a50;color:#fff6ea;font:18px system-ui;text-align:center">Ocean Catxplorer is an interactive dive and needs JavaScript to run.</p></noscript>
 <script type="module" src="/src/main.ts"></script>
 </body>
 </html>

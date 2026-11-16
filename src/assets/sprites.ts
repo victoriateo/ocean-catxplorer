@@ -31,19 +31,19 @@ export const artOff = new URLSearchParams(location.search).get('art') === 'off';
 /** Called once per image as it finishes loading. */
 export function onArtLoaded(fn: (name: string) => void) { listeners.push(fn); }
 
+/** Resolves once every available image has loaded (or failed); immediately if there is no art. */
 export async function loadArt() {
   if (artOff) return;
   const base = import.meta.env.BASE_URL + 'art/';
   let have: string[] = [];
   try { const r = await fetch(base + 'index.json'); if (r.ok) have = await r.json(); } catch { /* no art yet */ }
-  for (const [name, def] of Object.entries(defs)) {
-    if (!have.includes(def.file)) continue;
+  await Promise.all(Object.entries(defs).filter(([, def]) => have.includes(def.file)).map(([name, def]) => new Promise<void>(done => {
     const img = new Image();
     img.decoding = 'async';
-    img.onload = () => { images.set(name, img); for (const fn of listeners) fn(name); };
-    img.onerror = () => { /* stays code-drawn */ };
+    img.onload = () => { images.set(name, img); for (const fn of listeners) fn(name); done(); };
+    img.onerror = () => done();   // stays code-drawn
     img.src = `${base}${def.file}.webp`;
-  }
+  })));
 }
 
 export const sprite = (name: string) => images.get(name) ?? null;

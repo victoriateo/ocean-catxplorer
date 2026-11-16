@@ -22,9 +22,19 @@ export function initLayers() {
   layers.stage = $('stage');
 }
 
+let probe: HTMLElement | null = null;
+/**
+ * Viewport height that does NOT change when a phone's address bar slides in and out (the "large
+ * viewport"). Using it means scrolling on a phone never resizes, and so never resets, the scene.
+ */
+export function stableHeight() {
+  if (!probe) { probe = document.createElement('div'); probe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:100lvh;visibility:hidden;pointer-events:none'; document.body.appendChild(probe); }
+  return probe.offsetHeight || innerHeight;
+}
+
 /** Reads the viewport size into `world` and resizes the canvases. */
 export function resizeLayers() {
   world.DPR = Math.min(window.devicePixelRatio || 1, DPR_CAP);
-  world.W = innerWidth; world.H = innerHeight;
+  world.W = innerWidth; world.H = stableHeight();
   for (const c of [layers.back, layers.front]) { c.width = Math.round(world.W * world.DPR); c.height = Math.round(world.H * world.DPR); }
 }

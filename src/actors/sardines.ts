@@ -1,6 +1,6 @@
 // The sardine shoal: a swirling silver ball that wraps into a ring around Catto.
 // The far half of the ring is drawn on the back canvas, so he looks surrounded.
-import { world, cat } from '../core/state';
+import { world, cat, lite } from '../core/state';
 import { clamp, lerp } from '../core/math';
 import { depthOf } from '../core/depth';
 import { sfx } from '../audio/audio';
@@ -27,7 +27,7 @@ let sfish: Sardine[] = [];
 export function initSardines() {
   const { W, G } = world, ox = G.ox;
   Object.assign(shoal, { x: ox + W * .5, y: G.tangY, engaged: false, cool: 0, e: 0 });
-  sfish = Array.from({ length: W < 700 ? SARDINES.countMobile : SARDINES.count }, () => {
+  sfish = Array.from({ length: lite() ? SARDINES.countMobile : SARDINES.count }, () => {
     const th = Math.random() * 6.28, rr = .1 + .9 * Math.random();
     return { th, rr, w: .45 + Math.random() * .35, layer: (Math.random() - .5) * 2, s: .85 + Math.random() * .4,
       x: shoal.x + Math.cos(th) * 120 * rr, y: shoal.y + Math.sin(th) * 60 * rr, vx: 0, vy: 0, back: false };
